@@ -6,19 +6,30 @@
 // with cs.SetTexture
 uint tris;
 int numSamples;
-half scale;
-half3 offset;
 uint voxelSide;
+float3 _boundsMin;
+float3 _boundsMax;
 
 StructuredBuffer<half3> VertexBuffer;
 StructuredBuffer<int> IndexBuffer;
 RWTexture3D<half4> Voxels;
 
+// return 1 if v inside the box, return 0 otherwise
+int insideBox(half3 _pos)
+{
+	float3 s = step(_boundsMin, _pos) - step(_boundsMax, _pos);
+    return s.x * s.y * s.z; 
+}
+
+float3 remap(float3 value, float3 from1, float3 to1, float3 from2, float3 to2)
+{
+	return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+}
+
 // from https://beta.observablehq.com/@jrus/plastic-sequence
 half2 plastic(half index) {
 	return half2(0.5 + frac(0.7548776662466927 * index), 0.5 + frac(0.5698402909980532 * index));
 }
-
 
 // sample num, triangle basis vectors
 half3 triangleSample(int n, half3 A, half3 B) {
@@ -38,9 +49,9 @@ void MeshToVoxel(uint3 id : SV_DispatchThreadID)
 {
 	uint triID = id.x * 3;
 	if (triID >= tris * 3) return;
-	half3 a = VertexBuffer[IndexBuffer[triID + 0]] * scale + offset;
-	half3 b = VertexBuffer[IndexBuffer[triID + 1]] * scale + offset;
-	half3 c = VertexBuffer[IndexBuffer[triID + 2]] * scale + offset;
+	half3 a = VertexBuffer[IndexBuffer[triID + 0]] ;
+	half3 b = VertexBuffer[IndexBuffer[triID + 1]] ;
+	half3 c = VertexBuffer[IndexBuffer[triID + 2]] ;
 	half3 AB = b - a;
 	half3 AC = c - a;
 	half side = half(voxelSide);
@@ -49,6 +60,10 @@ void MeshToVoxel(uint3 id : SV_DispatchThreadID)
 		half2 s = half2(frac(0.7548776662466927 * i), frac(0.5698402909980532 * i));
 		s = s.x + s.y > 1.0 ? 1.0 - s : s;
 		half3 pointOnTri = a + s.x * AB + s.y * AC;
+		if(insideBox(pointOnTri) == 0)
+			pointOnTri = float3(-1000,-1000,-1000);
+		pointOnTri = remap(pointOnTri, _boundsMin, _boundsMax, float3(0,0,0), float3(1,1,1));
+
 		half3 scaled = pointOnTri * side;
 		uint3 voxelIdx = uint3(floor(scaled));
 		if (!(any(voxelIdx < 0) || any(voxelIdx >= voxelSide))) {

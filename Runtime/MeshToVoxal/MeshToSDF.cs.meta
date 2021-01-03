@@ -4,7 +4,11 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
+  - outputRenderTexture: {instanceID: 0}
+  - materialOutput: {instanceID: 0}
   - m_transferCS: {fileID: 7200000, guid: b9cb49024ba74f2489b20e8e1d0bc434, type: 3}
+  - MtVImplementation: {fileID: 7200000, guid: 01d6849e0d718e541a5f94ac338e6674, type: 3}
+  - JFAImplementation: {fileID: 7200000, guid: 18442a038d605124b8311cb87dca10f1, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

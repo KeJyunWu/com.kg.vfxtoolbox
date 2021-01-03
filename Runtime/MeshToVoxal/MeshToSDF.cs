@@ -5,35 +5,35 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace UltraCombos.VFXTool
 {
-    public class MeshToVoxal : MonoBehaviour
+    public class MeshToSDF : MonoBehaviour
     {
+        [Header("[ Stsyem Parameter]")]
         public int sdfResolution = 64;
         public uint samplesPerTriangle = 10;
-        public RenderTexture outputRenderTexture;
-        public Material materialOutput;
-        public float scaleBy = 1.0f;
-        public Vector3 offset;
-
-        [Space]
-        public float m_size = 0.1f;
+        public bool doSDF = false;
+        public float postProcessThickness = 0.01f;
         [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshs = null;
         [SerializeField] MeshFilter[] m_meshes = null;
+        public RenderTexture outputRenderTexture;
+        public Material materialOutput;
+        public Transform m_container;
 
-        public bool m_debug = false;
+        [Header("[ Debug ]")]
+        public bool m_drawGizmos = false;
+        public float m_gizmosSize = 0.1f;
+
+        [Header("[ Resources ]")]
         public ComputeShader m_transferCS;
         public ComputeShader MtVImplementation;
-
+        public ComputeShader JFAImplementation;
         public ComputeBuffer m_vertexBuffer;
         public ComputeBuffer m_indexBuffer;
 
         Mesh m_tempMesh;
         Vector3[] m_tempArray;
-
-        bool m_firstDisplay = false;
 
         private void OnEnable() => InitializeInternals();
         private void OnDisable() => DisposeInternals();
@@ -64,28 +64,10 @@ namespace UltraCombos.VFXTool
                 _indexOffset += _offset._iOffset;
             }
 
-           /* if(!m_firstDisplay)
-            {
-                m_vertexBuffer.GetData(m_tempArray);
-                Debug.Log("===========KJ ===========");
-                Debug.Log("Vertex Count : "+ m_vertexBuffer.count);
-                for (var i = 0; i < m_tempArray.Length; i++)
-                {
-                    Debug.Log(i + " : "+m_tempArray[i]);
-                }
-                Debug.Log("................................");
-                Debug.Log("Index Count : " + m_indexBuffer.count);
-                int[]  m_tempArray2 = new int[m_indexBuffer.count];
-                m_indexBuffer.GetData(m_tempArray2);
-                for (var i = 0; i < m_tempArray2.Length; i++)
-                {
-                    Debug.Log(i + " : " + m_tempArray2[i]);
-                }
-                Debug.Log("=======================");
-                m_firstDisplay = true;
-            }*/
-
             outputRenderTexture = MeshToVoxel(sdfResolution, samplesPerTriangle, m_vertexBuffer, m_indexBuffer, outputRenderTexture);
+
+            if (doSDF)
+                FloodFillToSDF(outputRenderTexture);
 
             if (materialOutput)
             {
@@ -166,12 +148,12 @@ namespace UltraCombos.VFXTool
 
         private void OnDrawGizmos()
         {
-            if (m_vertexBuffer != null && m_debug)
+            if (m_vertexBuffer != null && m_drawGizmos)
             {
                 m_vertexBuffer.GetData(m_tempArray);
                 for (var i = 0; i < m_tempArray.Length; i++)
                 {
-                    Gizmos.DrawWireCube(m_tempArray[i], Vector3.one * m_size);
+                    Gizmos.DrawWireCube(m_tempArray[i], Vector3.one * m_gizmosSize);
                 }
             }
         }
@@ -186,10 +168,10 @@ namespace UltraCombos.VFXTool
 
             MtVImplementation.SetBuffer(MtV, "VertexBuffer", _vertexBuffer);
             MtVImplementation.SetBuffer(MtV, "IndexBuffer", _indexBuffer);
+            MtVImplementation.SetVector("_boundsMin", m_container.position - m_container.localScale / 2);
+            MtVImplementation.SetVector("_boundsMax", m_container.position + m_container.localScale / 2);
             MtVImplementation.SetInt("tris", numTris);
-            MtVImplementation.SetFloats("offset", offset.x, offset.y, offset.z);
             MtVImplementation.SetInt("numSamples", (int)numSamplesPerTriangle);
-            MtVImplementation.SetFloat("scale", scaleBy);
             MtVImplementation.SetInt("voxelSide", (int)voxelResolution);
 
             if (voxels == null)
@@ -215,6 +197,33 @@ namespace UltraCombos.VFXTool
             return voxels;
         }
 
+        public void FloodFillToSDF(RenderTexture voxels)
+        {
+            int dispatchCubeSize = voxels.width;
+            JFAImplementation.SetInt("dispatchCubeSide", dispatchCubeSize);
+
+            JFAImplementation.SetTexture(JFAImplementation.FindKernel("Preprocess"), "Voxels", voxels);
+            JFAImplementation.Dispatch(JFAImplementation.FindKernel("Preprocess"), numGroups(voxels.width, 8),
+                    numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
+
+            JFAImplementation.SetTexture(JFAImplementation.FindKernel("JFA"), "Voxels", voxels);
+
+            /*JFAImplementation.Dispatch(JFA, numGroups(voxels.width, 8),
+                numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8)); */
+
+            for (int offset = voxels.width / 2; offset >= 1; offset /= 2)
+            {
+                JFAImplementation.SetInt("samplingOffset", offset);
+                JFAImplementation.Dispatch(JFAImplementation.FindKernel("JFA"), numGroups(voxels.width, 8),
+                    numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
+            }
+
+            JFAImplementation.SetFloat("postProcessThickness", postProcessThickness);
+            JFAImplementation.SetTexture(JFAImplementation.FindKernel("Postprocess"), "Voxels", voxels);
+
+            JFAImplementation.Dispatch(JFAImplementation.FindKernel("Postprocess"), numGroups(voxels.width, 8),
+                numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
+        }
         int numGroups(int totalThreads, int groupSize)
         {
             return (totalThreads + (groupSize - 1)) / groupSize;
