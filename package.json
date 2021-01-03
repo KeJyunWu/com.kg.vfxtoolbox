@@ -1,9 +1,9 @@
 {
-    "name": "com.ultracombos.template",
-    "displayName": "Template",
+    "name": "com.ultracombos.vfxtools",
+    "displayName": "VFXTools",
     "version": "1.0.0",
-    "unity": "2018.3",
-    "description": "Template Package for Unity.",
+    "unity": "2020.1",
+    "description": "VFXTools Package for Unity.",
     "keywords": [],
     "category": "",
     "dependencies": { }

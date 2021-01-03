@@ -1,0 +1,19 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Core
+
+RWStructuredBuffer<float3> m_vertexBuffer;
+int m_offset;
+int m_count;
+float4x4 m_transformMatrix;
+
+[numthreads(8,1,1)]
+void Core (uint id : SV_DispatchThreadID)
+{
+   if(id<m_count)
+   {
+        int _index = id+m_offset;
+        float3 _p = m_vertexBuffer[_index];
+        _p = mul(m_transformMatrix, float4(_p, 1)).xyz;
+        m_vertexBuffer[_index] = _p;
+   }
+}

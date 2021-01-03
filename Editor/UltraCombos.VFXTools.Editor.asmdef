@@ -1,9 +1,9 @@
 {
-    "name": "UltraCombos.Template.Editor",
+    "name": "UltraCombos.VFXTools.Editor",
+    "rootNamespace": "",
     "references": [
         "UltraCombos.Template.Runtime"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -12,5 +12,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
