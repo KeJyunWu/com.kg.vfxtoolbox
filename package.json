@@ -1,0 +1,10 @@
+{
+    "name": "com.ultracombos.template",
+    "displayName": "Template",
+    "version": "1.0.0",
+    "unity": "2018.3",
+    "description": "Template Package for Unity.",
+    "keywords": [],
+    "category": "",
+    "dependencies": { }
+}

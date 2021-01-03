@@ -1,0 +1,16 @@
+{
+    "name": "UltraCombos.Template.Editor",
+    "references": [
+        "UltraCombos.Template.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
