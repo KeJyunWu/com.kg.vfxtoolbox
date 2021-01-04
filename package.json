@@ -1,7 +1,7 @@
 {
     "name": "com.ultracombos.vfxtools",
     "displayName": "VFXTools",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2020.1",
     "description": "VFXTools Package for Unity.",
     "keywords": [],
