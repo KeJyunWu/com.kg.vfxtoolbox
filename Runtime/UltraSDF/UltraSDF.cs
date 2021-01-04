@@ -3,35 +3,48 @@ using Unity.Burst;
 using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
-using Unity.Mathematics;
-using System.Collections.Generic;
 
 namespace UltraCombos.VFXTool
 {
-    public class MeshToSDF : MonoBehaviour
+    public class UltraSDF : MonoBehaviour
     {
         [Header("[ Stsyem Parameter]")]
-        public int sdfResolution = 64;
-        public uint samplesPerTriangle = 10;
-        public bool doSDF = false;
-        public float postProcessThickness = 0.01f;
-        [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshs = null;
+        [SerializeField] int m_resolution = 64;
+        public int Resolution { get => m_resolution; set => m_resolution = value; }
+
+        [SerializeField] uint m_samplesPerTriangle = 10000;
+        public uint SamplesPerTriangle { get => m_samplesPerTriangle; set => m_samplesPerTriangle = value; }
+
+        [SerializeField] bool m_doSDF = false;
+        public bool DoSDF { get => m_doSDF; set => m_doSDF = value; }
+
+        [SerializeField] float m_postProcessThickness = 0.01f;
+        public float PostProcessThickness { get => m_postProcessThickness; set => m_postProcessThickness = value; }
+
+        [SerializeField] Transform m_container;
+        public Transform Container { get => m_container; set => m_container = value; }
+
+        [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshes = null;
+        public SkinnedMeshRenderer[] SkinnedMeshes { get => m_skinnedMeshes; set => m_skinnedMeshes = value; }
+
         [SerializeField] MeshFilter[] m_meshes = null;
-        public RenderTexture outputRenderTexture;
-        public Material materialOutput;
-        public Transform m_container;
+        public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
 
         [Header("[ Debug ]")]
         public bool m_drawGizmos = false;
         public float m_gizmosSize = 0.1f;
+        public Material m_viewerMat;
+        public string m_viewerMatPropertyName = "_Texture3D";
 
         [Header("[ Resources ]")]
         public ComputeShader m_transferCS;
-        public ComputeShader MtVImplementation;
-        public ComputeShader JFAImplementation;
-        public ComputeBuffer m_vertexBuffer;
-        public ComputeBuffer m_indexBuffer;
+        public ComputeShader m_MtVImplementationCS;
+        public ComputeShader m_JFAImplementationCS;
 
+        RenderTexture m_result;
+        public RenderTexture Result { get => m_result; set => m_result = value; }
+        ComputeBuffer m_vertexBuffer;
+        ComputeBuffer m_indexBuffer;
         Mesh m_tempMesh;
         Vector3[] m_tempArray;
 
@@ -50,7 +63,7 @@ namespace UltraCombos.VFXTool
 
             var _vertexOffset = 0;
             var _indexOffset = 0;
-            foreach (var source in m_skinnedMeshs)
+            foreach (var source in m_skinnedMeshes)
             {
                 var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
                 _vertexOffset += _offset._vOffset;
@@ -64,17 +77,17 @@ namespace UltraCombos.VFXTool
                 _indexOffset += _offset._iOffset;
             }
 
-            outputRenderTexture = MeshToVoxel(sdfResolution, samplesPerTriangle, m_vertexBuffer, m_indexBuffer, outputRenderTexture);
+            Result = MeshToVoxel(m_resolution, m_samplesPerTriangle, m_vertexBuffer, m_indexBuffer, Result);
 
-            if (doSDF)
-                FloodFillToSDF(outputRenderTexture);
+            if (m_doSDF)
+                FloodFillToSDF(Result);
 
-            if (materialOutput)
+            if (m_viewerMat)
             {
-                if (!materialOutput.HasProperty("_Texture3D"))
-                    Debug.LogError(string.Format("Material output doesn't have property {0}", "_Texture3D"));
+                if (!m_viewerMat.HasProperty(m_viewerMatPropertyName))
+                    Debug.LogError(string.Format("Material output doesn't have property {0}", m_viewerMatPropertyName));
                 else
-                    materialOutput.SetTexture("_Texture3D", outputRenderTexture);
+                    m_viewerMat.SetTexture(m_viewerMatPropertyName, Result);
             }
         }
 
@@ -121,7 +134,7 @@ namespace UltraCombos.VFXTool
 
         void InitializeInternals()
         {
-            using (var mesh = new CombinedMesh(m_meshes.Select(smr => smr.sharedMesh).ToArray(), m_skinnedMeshs))
+            using (var mesh = new CombinedMesh(m_meshes.Select(smr => smr.sharedMesh).ToArray(), m_skinnedMeshes))
             {
                 var _vcount = mesh.Vertices.Length;
                 m_vertexBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float)*3);
@@ -161,18 +174,18 @@ namespace UltraCombos.VFXTool
         public RenderTexture MeshToVoxel(int voxelResolution, uint numSamplesPerTriangle,
         ComputeBuffer _vertexBuffer, ComputeBuffer _indexBuffer, RenderTexture voxels = null)
         {
-            int MtV = MtVImplementation.FindKernel("MeshToVoxel");
-            int Zero = MtVImplementation.FindKernel("Zero");
+            int MtV = m_MtVImplementationCS.FindKernel("MeshToVoxel");
+            int Zero = m_MtVImplementationCS.FindKernel("Zero");
 
             var numTris = _indexBuffer.count / 3;
 
-            MtVImplementation.SetBuffer(MtV, "VertexBuffer", _vertexBuffer);
-            MtVImplementation.SetBuffer(MtV, "IndexBuffer", _indexBuffer);
-            MtVImplementation.SetVector("_boundsMin", m_container.position - m_container.localScale / 2);
-            MtVImplementation.SetVector("_boundsMax", m_container.position + m_container.localScale / 2);
-            MtVImplementation.SetInt("tris", numTris);
-            MtVImplementation.SetInt("numSamples", (int)numSamplesPerTriangle);
-            MtVImplementation.SetInt("voxelSide", (int)voxelResolution);
+            m_MtVImplementationCS.SetBuffer(MtV, "VertexBuffer", _vertexBuffer);
+            m_MtVImplementationCS.SetBuffer(MtV, "IndexBuffer", _indexBuffer);
+            m_MtVImplementationCS.SetVector("_boundsMin", m_container.position - m_container.localScale / 2);
+            m_MtVImplementationCS.SetVector("_boundsMax", m_container.position + m_container.localScale / 2);
+            m_MtVImplementationCS.SetInt("tris", numTris);
+            m_MtVImplementationCS.SetInt("numSamples", (int)numSamplesPerTriangle);
+            m_MtVImplementationCS.SetInt("voxelSide", (int)voxelResolution);
 
             if (voxels == null)
             {
@@ -185,14 +198,14 @@ namespace UltraCombos.VFXTool
                 voxels.Create();
             }
 
-            MtVImplementation.SetBuffer(Zero, "VertexBuffer", _vertexBuffer);
-            MtVImplementation.SetBuffer(Zero, "IndexBuffer", _indexBuffer);
-            MtVImplementation.SetTexture(Zero, "Voxels", voxels);
-            MtVImplementation.Dispatch(Zero, numGroups(voxelResolution, 8),
+            m_MtVImplementationCS.SetBuffer(Zero, "VertexBuffer", _vertexBuffer);
+            m_MtVImplementationCS.SetBuffer(Zero, "IndexBuffer", _indexBuffer);
+            m_MtVImplementationCS.SetTexture(Zero, "Voxels", voxels);
+            m_MtVImplementationCS.Dispatch(Zero, numGroups(voxelResolution, 8),
                 numGroups(voxelResolution, 8), numGroups(voxelResolution, 8));
 
-            MtVImplementation.SetTexture(MtV, "Voxels", voxels);
-            MtVImplementation.Dispatch(MtV, numGroups(numTris, 512), 1, 1);
+            m_MtVImplementationCS.SetTexture(MtV, "Voxels", voxels);
+            m_MtVImplementationCS.Dispatch(MtV, numGroups(numTris, 512), 1, 1);
 
             return voxels;
         }
@@ -200,28 +213,25 @@ namespace UltraCombos.VFXTool
         public void FloodFillToSDF(RenderTexture voxels)
         {
             int dispatchCubeSize = voxels.width;
-            JFAImplementation.SetInt("dispatchCubeSide", dispatchCubeSize);
+            m_JFAImplementationCS.SetInt("dispatchCubeSide", dispatchCubeSize);
 
-            JFAImplementation.SetTexture(JFAImplementation.FindKernel("Preprocess"), "Voxels", voxels);
-            JFAImplementation.Dispatch(JFAImplementation.FindKernel("Preprocess"), numGroups(voxels.width, 8),
+            m_JFAImplementationCS.SetTexture(m_JFAImplementationCS.FindKernel("Preprocess"), "Voxels", voxels);
+            m_JFAImplementationCS.Dispatch(m_JFAImplementationCS.FindKernel("Preprocess"), numGroups(voxels.width, 8),
                     numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
 
-            JFAImplementation.SetTexture(JFAImplementation.FindKernel("JFA"), "Voxels", voxels);
-
-            /*JFAImplementation.Dispatch(JFA, numGroups(voxels.width, 8),
-                numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8)); */
+            m_JFAImplementationCS.SetTexture(m_JFAImplementationCS.FindKernel("JFA"), "Voxels", voxels);
 
             for (int offset = voxels.width / 2; offset >= 1; offset /= 2)
             {
-                JFAImplementation.SetInt("samplingOffset", offset);
-                JFAImplementation.Dispatch(JFAImplementation.FindKernel("JFA"), numGroups(voxels.width, 8),
+                m_JFAImplementationCS.SetInt("samplingOffset", offset);
+                m_JFAImplementationCS.Dispatch(m_JFAImplementationCS.FindKernel("JFA"), numGroups(voxels.width, 8),
                     numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
             }
 
-            JFAImplementation.SetFloat("postProcessThickness", postProcessThickness);
-            JFAImplementation.SetTexture(JFAImplementation.FindKernel("Postprocess"), "Voxels", voxels);
+            m_JFAImplementationCS.SetFloat("postProcessThickness", m_postProcessThickness);
+            m_JFAImplementationCS.SetTexture(m_JFAImplementationCS.FindKernel("Postprocess"), "Voxels", voxels);
 
-            JFAImplementation.Dispatch(JFAImplementation.FindKernel("Postprocess"), numGroups(voxels.width, 8),
+            m_JFAImplementationCS.Dispatch(m_JFAImplementationCS.FindKernel("Postprocess"), numGroups(voxels.width, 8),
                 numGroups(voxels.height, 8), numGroups(voxels.volumeDepth, 8));
         }
         int numGroups(int totalThreads, int groupSize)
