@@ -1,1 +1,2 @@
-com.ultracombos.vfxtools
+# VFXToolbox
+Additional tools for Visual Effect Artists.
