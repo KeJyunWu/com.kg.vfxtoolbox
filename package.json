@@ -1,17 +1,21 @@
 {
- "name": "com.ultracombos.vfxtools",
- "displayName": "VFXTools",
- "version": "1.0.3",
- "unity": "2020.1",
- "description": "VFXTools Package for Unity.",
- "keywords": [],
- "category": "",
- "type":"tool",
- "dependencies": {"com.unity.burst":"1.3.4"},
- "publishConfig": {"registry": "http://nas.ultracombos.com:4873"},
- "author": {
-  "name": "Ultra Combos Co., Ltd.",
-  "email": "tech@ultracombos.com",
-  "url": "https://ultracombos.com"
- }
+  "name": "com.ultracombos.vfxtoolbox",
+  "displayName": "VFX Tool Box",
+  "version": "1.0.4",
+  "unity": "2020.1",
+  "description": "VFXTools Package for Unity.",
+  "keywords": [],
+  "category": "",
+  "type": "tool",
+  "dependencies": {
+    "com.unity.burst": "1.3.4"
+  },
+  "publishConfig": {
+    "registry": "http://nas.ultracombos.com:4873"
+  },
+  "author": {
+    "name": "Ultra Combos Co., Ltd.",
+    "email": "tech@ultracombos.com",
+    "url": "https://ultracombos.com"
+  }
 }

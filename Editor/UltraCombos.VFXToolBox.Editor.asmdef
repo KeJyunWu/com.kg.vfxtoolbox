@@ -1,5 +1,5 @@
 {
-    "name": "UltraCombos.VFXTools.Editor",
+    "name": "UltraCombos.VFXToolBox.Editor",
     "rootNamespace": "",
     "references": [
         "UltraCombos.Template.Runtime"
