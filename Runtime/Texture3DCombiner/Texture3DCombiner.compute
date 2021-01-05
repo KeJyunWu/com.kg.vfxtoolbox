@@ -1,0 +1,21 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Init
+#pragma kernel Core
+
+Texture3D<float4> m_intput1;
+Texture3D<float4> m_intput2;
+RWTexture3D<float4> m_output;
+
+[numthreads(8,8,8)]
+void Init (uint3 id : SV_DispatchThreadID)
+{
+    m_output[id] = float4(0,0,0,1);
+}
+
+[numthreads(8,8,8)]
+void Core (uint3 id : SV_DispatchThreadID)
+{
+    float4 _s1 = m_intput1[id];
+    float4 _s2 = m_intput2[id];
+    m_output[id] =_s1 + _s2;
+}
