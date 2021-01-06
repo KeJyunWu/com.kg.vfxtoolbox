@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 
-namespace UltraCombos.VFXTool
+namespace UltraCombos.VFXToolBox
 {
     static class ObjectUtil
     {

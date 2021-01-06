@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace UltraCombos.VFXTool
+namespace UltraCombos.VFXToolBox
 {
     public class UltraSDF : MonoBehaviour
     {

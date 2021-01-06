@@ -6,7 +6,7 @@ using Unity.Mathematics;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UltraCombos.VFXTool
+namespace UltraCombos.VFXToolBox
 { 
     class CombinedMesh : System.IDisposable
     {
