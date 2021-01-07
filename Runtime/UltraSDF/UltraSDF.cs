@@ -238,22 +238,22 @@ namespace UltraCombos.VFXToolBox
         {
             return (totalThreads + (groupSize - 1)) / groupSize;
         }
-    }
 
-    #region Index array concatenation job
-    [BurstCompile(CompileSynchronously = true)]
-    struct ConcatenationJob : IJob
-    {
-        public NativeArray<int> m_output;
-        public int m_indexOffset;
-
-        public void Execute()
+        #region Index array concatenation job
+        [BurstCompile(CompileSynchronously = true)]
+        struct ConcatenationJob : IJob
         {
-            for (var i = 0; i < m_output.Length; i++)
+            public NativeArray<int> m_output;
+            public int m_indexOffset;
+
+            public void Execute()
             {
-                m_output[i] += m_indexOffset;
+                for (var i = 0; i < m_output.Length; i++)
+                {
+                    m_output[i] += m_indexOffset;
+                }
             }
         }
+        #endregion
     }
-    #endregion
 }

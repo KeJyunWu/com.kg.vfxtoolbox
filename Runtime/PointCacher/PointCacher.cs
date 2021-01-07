@@ -1,0 +1,215 @@
+using UnityEngine;
+using Unity.Burst;
+using System.Linq;
+using Unity.Collections;
+using Unity.Jobs;
+
+namespace UltraCombos.VFXToolBox
+{
+    public class PointCacher : MonoBehaviour
+    {
+        [Header("[ Stsyem Parameter]")]
+        [SerializeField] int m_pointCount;
+        public int PointCount { get => m_pointCount; set => m_pointCount = value; }
+
+        [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshes = null;
+        public SkinnedMeshRenderer[] SkinnedMeshes { get => m_skinnedMeshes; set => m_skinnedMeshes = value; }
+
+        [SerializeField] MeshFilter[] m_meshes = null;
+        public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
+
+        [Header("[ Debug ]")]
+        public bool m_drawGizmos = false;
+        public float m_gizmosSize = 0.1f;
+
+        [Header("[ Resources ]")]
+        public ComputeShader m_pointCacherCS;
+
+        [SerializeField]
+        RenderTexture m_positionMap;
+        public RenderTexture PositionMap { get => m_positionMap;}
+
+        RenderTexture m_velocityMap;
+        RenderTexture m_normalMap;
+        ComputeBuffer m_samplePointsBuffer;
+        ComputeBuffer m_vertexBuffer;
+        ComputeBuffer m_indexBuffer;
+        Mesh m_tempMesh;
+        Vector3[] m_tempArray;
+
+        private void OnEnable() => InitializeInternals();
+        private void OnDisable() => DisposeInternals();
+
+        private void OnValidate()
+        {
+            DisposeInternals();
+        }
+
+        private void LateUpdate()
+        {
+            if (m_tempMesh == null) InitializeInternals();
+
+            var _vertexOffset = 0;
+            var _indexOffset = 0;
+            foreach (var source in m_skinnedMeshes)
+            {
+                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                _vertexOffset += _offset._vOffset;
+                _indexOffset += _offset._iOffset;
+            }
+
+            foreach (var source in m_meshes)
+            {
+                var _offset = MeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                _vertexOffset += _offset._vOffset;
+                _indexOffset += _offset._iOffset;
+            }
+
+            TransferData();
+        }
+
+        (int _vOffset, int _iOffset) SkinnedMeshBake(SkinnedMeshRenderer _source, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
+        {
+            _source.BakeMesh(m_tempMesh);
+            return BakeSource(m_tempMesh, _vertexOffset, _indexOffset, _transform);
+        }
+
+        (int _vOffset, int _iOffset) MeshBake(MeshFilter _source, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
+        {
+            return BakeSource(_source.mesh, _vertexOffset, _indexOffset, _transform);
+        }
+
+        (int _vOffset, int _iOffset) BakeSource(Mesh _mesh, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
+        {
+            using (var dataArray = Mesh.AcquireReadOnlyMeshData(_mesh))
+            {
+                var _data = dataArray[0];
+                var _vcount = _data.vertexCount;
+                var _icount = _data.GetSubMesh(0).indexCount;
+
+                using (var pos = MemoryUtil.TempJobArray<Vector3>(_vcount))
+                using (var index = MemoryUtil.TempJobArray<int>(_icount))
+                {
+                    _data.GetVertices(pos);
+                    _data.GetIndices(index, 0);
+
+                    new ConcatenationJob
+                    { m_output = index, m_indexOffset = _vertexOffset }.Run();
+
+                    m_vertexBuffer.SetData(pos, 0, _vertexOffset, _vcount);
+                    m_indexBuffer.SetData(index, 0, _indexOffset, _icount);
+
+                    m_pointCacherCS.SetInt("m_offset", _vertexOffset);
+                    m_pointCacherCS.SetInt("m_count", _vcount);
+                    m_pointCacherCS.SetMatrix("m_transformMatrix", _transform);
+
+                    int _kernel = m_pointCacherCS.FindKernel("Transform");
+                    m_pointCacherCS.SetBuffer(_kernel, "m_vertexBuffer", m_vertexBuffer);
+                    m_pointCacherCS.Dispatch(_kernel, Mathf.CeilToInt(_vcount / 8.0f), 1, 1);
+                    return (_vcount, _icount);
+                }
+            }
+        }
+
+        void TransferData()
+        {
+            int _kernel = m_pointCacherCS.FindKernel("TransferData");
+
+            m_pointCacherCS.SetInt("SampleCount", m_pointCount);
+            m_pointCacherCS.SetFloat("FrameRate", 1 / Time.deltaTime);
+
+            m_pointCacherCS.SetBuffer(_kernel, "SamplePoints", m_samplePointsBuffer);
+            m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer", m_vertexBuffer);
+
+            m_pointCacherCS.SetTexture(_kernel, "PositionMap", m_positionMap);
+            m_pointCacherCS.SetTexture(_kernel, "VelocityMap", m_velocityMap);
+            m_pointCacherCS.SetTexture(_kernel, "NormalMap", m_normalMap);
+
+            var width = m_positionMap.width;
+            var height = m_positionMap.height;
+            m_pointCacherCS.Dispatch(_kernel, width / 8, height / 8, 1);
+        }
+
+        void InitializeInternals()
+        {
+            using (var mesh = new CombinedMesh(m_meshes.Select(smr => smr.sharedMesh).ToArray(), m_skinnedMeshes))
+            {
+                using (var points = SamplePointGenerator.Generate
+                      (mesh, m_pointCount))
+                {
+                    m_samplePointsBuffer = new ComputeBuffer
+                      (m_pointCount, SamplePoint.SizeInByte);
+                    m_samplePointsBuffer.SetData(points);
+                }
+
+                var _vcount = mesh.Vertices.Length;
+                m_vertexBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float) * 3);
+                m_indexBuffer = new ComputeBuffer(mesh.Indices.Length, sizeof(int));
+                m_tempArray = new Vector3[m_vertexBuffer.count];
+            }
+
+            var width = 256;
+            var height = (((m_pointCount + width - 1) / width + 7) / 8) * 8;
+            m_positionMap = RenderTextureUtil.AllocateFloat(width, height);
+            m_velocityMap = RenderTextureUtil.AllocateHalf(width, height);
+            m_normalMap = RenderTextureUtil.AllocateHalf(width, height);
+
+            // Temporary mesh object
+            m_tempMesh = new Mesh();
+            m_tempMesh.hideFlags = HideFlags.DontSave;
+        }
+
+        void DisposeInternals()
+        {
+            m_samplePointsBuffer?.Dispose();
+            m_samplePointsBuffer = null;
+
+            m_vertexBuffer?.Dispose();
+            m_vertexBuffer = null;
+
+            m_indexBuffer?.Dispose();
+            m_indexBuffer = null;
+
+            ObjectUtil.Destroy(m_positionMap);
+            m_positionMap = null;
+
+            ObjectUtil.Destroy(m_velocityMap);
+            m_velocityMap = null;
+
+            ObjectUtil.Destroy(m_normalMap);
+            m_normalMap = null;
+
+            ObjectUtil.Destroy(m_tempMesh);
+            m_tempMesh = null;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (m_vertexBuffer != null && m_drawGizmos)
+            {
+                m_vertexBuffer.GetData(m_tempArray);
+                for (var i = 0; i < m_tempArray.Length; i++)
+                {
+                    Gizmos.DrawWireCube(m_tempArray[i], Vector3.one * m_gizmosSize);
+                }
+            }
+        }
+
+        #region Index array concatenation job
+        [BurstCompile(CompileSynchronously = true)]
+        struct ConcatenationJob : IJob
+        {
+            public NativeArray<int> m_output;
+            public int m_indexOffset;
+
+            public void Execute()
+            {
+                for (var i = 0; i < m_output.Length; i++)
+                {
+                    m_output[i] += m_indexOffset;
+                }
+            }
+        }
+        #endregion
+    }
+}

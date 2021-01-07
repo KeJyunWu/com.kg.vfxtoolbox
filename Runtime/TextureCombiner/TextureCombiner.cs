@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UltraCombos.VFXToolBox
 {
-    public class Texture3DCombiner : MonoBehaviour
+    public class TextureCombiner : MonoBehaviour
     {
         const int READ = 0;
         const int WRITE = 1;
@@ -51,7 +51,6 @@ namespace UltraCombos.VFXToolBox
                 }
             }
         }
-
 
         private void Start()
         {

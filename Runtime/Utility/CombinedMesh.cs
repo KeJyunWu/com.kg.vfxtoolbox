@@ -47,7 +47,6 @@ namespace UltraCombos.VFXToolBox
 
         void Initialize(Mesh[] meshes)
         {
-            Debug.Log(meshes.Length);
             // Managed mesh array -> Read-only mesh data array
             using (var dataArray = Mesh.AcquireReadOnlyMeshData(meshes))
             {

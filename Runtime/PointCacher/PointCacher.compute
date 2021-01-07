@@ -1,0 +1,65 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Transform
+#pragma kernel TransferData
+
+struct SamplePoint
+{
+    uint4 indices;
+    float4 weights;
+};
+
+uint SampleCount;
+StructuredBuffer<SamplePoint> SamplePoints;
+StructuredBuffer<float3> PositionBuffer;
+RWTexture2D<float4> PositionMap;
+RWTexture2D<float4> VelocityMap;
+RWTexture2D<float4> NormalMap;
+
+
+RWStructuredBuffer<float3> m_vertexBuffer;
+int m_offset;
+int m_count;
+float4x4 m_transformMatrix;
+
+float3 SampleBuffer(StructuredBuffer<float3> buffer, SamplePoint sp)
+{
+    return buffer[sp.indices.x] * sp.weights.x + 
+           buffer[sp.indices.y] * sp.weights.y + 
+           buffer[sp.indices.z] * sp.weights.z;
+}
+
+// Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
+uint Hash(uint s)
+{
+    s ^= 2747636419u;
+    s *= 2654435769u;
+    s ^= s >> 16;
+    s *= 2654435769u;
+    s ^= s >> 16;
+    s *= 2654435769u;
+    return s;
+}
+
+
+[numthreads(8,1,1)]
+void Transform (uint id : SV_DispatchThreadID)
+{
+   if(id<m_count)
+   {
+        int _index = id+m_offset;
+        float3 _p = m_vertexBuffer[_index];
+        _p = mul(m_transformMatrix, float4(_p, 1)).xyz;
+        m_vertexBuffer[_index] = _p;
+   }
+}
+
+[numthreads(8, 8, 1)]
+void TransferData(uint2 id : SV_DispatchThreadID)
+{
+    uint si = Hash(id.x + id.y * 65536) % SampleCount;
+    SamplePoint sp = SamplePoints[si];
+
+    float3 p1 = SampleBuffer(PositionBuffer, sp);
+
+    PositionMap[id] = float4(p1, 1);
+}
