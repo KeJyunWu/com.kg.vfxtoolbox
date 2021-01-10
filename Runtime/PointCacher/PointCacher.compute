@@ -11,6 +11,8 @@ struct SamplePoint
 uint SampleCount;
 StructuredBuffer<SamplePoint> SamplePoints;
 StructuredBuffer<float3> PositionBuffer;
+RWStructuredBuffer<float3> PositionTransferredBuffer;
+
 RWTexture2D<float4> PositionMap;
 RWTexture2D<float4> VelocityMap;
 RWTexture2D<float4> NormalMap;
@@ -61,5 +63,9 @@ void TransferData(uint2 id : SV_DispatchThreadID)
 
     float3 p1 = SampleBuffer(PositionBuffer, sp);
 
+    uint _width, height;
+   PositionMap.GetDimensions(_width, height);
+
+    PositionTransferredBuffer[id.x + id.y*_width]  = p1;
     PositionMap[id] = float4(p1, 1);
 }

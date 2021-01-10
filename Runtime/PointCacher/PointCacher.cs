@@ -29,11 +29,21 @@ namespace UltraCombos.VFXToolBox
         RenderTexture m_positionMap;
         public RenderTexture PositionMap { get => m_positionMap;}
 
+        ComputeBuffer m_vertexTransferredBuffer;
+        public ComputeBuffer VertexTransferredBuffer { get => m_vertexTransferredBuffer; }
+
+        Vector3[] n_vertexTransferredArray;
+        public Vector3[] VertexTransferredArray { get { VertexTransferredBuffer.GetData(n_vertexTransferredArray); return n_vertexTransferredArray; } }
+
         RenderTexture m_velocityMap;
         RenderTexture m_normalMap;
+
         ComputeBuffer m_samplePointsBuffer;
         ComputeBuffer m_vertexBuffer;
+
         ComputeBuffer m_indexBuffer;
+        ComputeBuffer m_uvBuffer;
+
         Mesh m_tempMesh;
         Vector3[] m_tempArray;
 
@@ -51,16 +61,17 @@ namespace UltraCombos.VFXToolBox
 
             var _vertexOffset = 0;
             var _indexOffset = 0;
-            foreach (var source in m_skinnedMeshes)
-            {
-                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
-                _vertexOffset += _offset._vOffset;
-                _indexOffset += _offset._iOffset;
-            }
 
             foreach (var source in m_meshes)
             {
                 var _offset = MeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                _vertexOffset += _offset._vOffset;
+                _indexOffset += _offset._iOffset;
+            }
+
+            foreach (var source in m_skinnedMeshes)
+            {
+                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
                 _vertexOffset += _offset._vOffset;
                 _indexOffset += _offset._iOffset;
             }
@@ -120,6 +131,7 @@ namespace UltraCombos.VFXToolBox
 
             m_pointCacherCS.SetBuffer(_kernel, "SamplePoints", m_samplePointsBuffer);
             m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer", m_vertexBuffer);
+            m_pointCacherCS.SetBuffer(_kernel, "PositionTransferredBuffer", m_vertexTransferredBuffer);
 
             m_pointCacherCS.SetTexture(_kernel, "PositionMap", m_positionMap);
             m_pointCacherCS.SetTexture(_kernel, "VelocityMap", m_velocityMap);
@@ -145,6 +157,9 @@ namespace UltraCombos.VFXToolBox
                 var _vcount = mesh.Vertices.Length;
                 m_vertexBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float) * 3);
                 m_indexBuffer = new ComputeBuffer(mesh.Indices.Length, sizeof(int));
+                m_uvBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float)*2);
+                m_vertexTransferredBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 3);
+                n_vertexTransferredArray = new Vector3[m_pointCount];
                 m_tempArray = new Vector3[m_vertexBuffer.count];
             }
 
@@ -164,11 +179,17 @@ namespace UltraCombos.VFXToolBox
             m_samplePointsBuffer?.Dispose();
             m_samplePointsBuffer = null;
 
+            m_vertexTransferredBuffer?.Dispose();
+            m_vertexTransferredBuffer = null;
+
             m_vertexBuffer?.Dispose();
             m_vertexBuffer = null;
 
             m_indexBuffer?.Dispose();
             m_indexBuffer = null;
+
+            m_uvBuffer?.Dispose();
+            m_uvBuffer = null;
 
             ObjectUtil.Destroy(m_positionMap);
             m_positionMap = null;
@@ -181,6 +202,9 @@ namespace UltraCombos.VFXToolBox
 
             ObjectUtil.Destroy(m_tempMesh);
             m_tempMesh = null;
+
+            m_tempArray = null;
+            n_vertexTransferredArray = null;
         }
 
         private void OnDrawGizmos()
