@@ -67,5 +67,6 @@ void TransferData(uint2 id : SV_DispatchThreadID)
    PositionMap.GetDimensions(_width, height);
 
     PositionTransferredBuffer[id.x + id.y*_width]  = p1;
+    //PositionTransferredBuffer[id.x + id.y*_width]  = PositionBuffer[id.x + id.y*_width];
     PositionMap[id] = float4(p1, 1);
 }

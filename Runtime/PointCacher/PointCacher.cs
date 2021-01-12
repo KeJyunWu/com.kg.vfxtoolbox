@@ -32,8 +32,8 @@ namespace UltraCombos.VFXToolBox
         ComputeBuffer m_vertexTransferredBuffer;
         public ComputeBuffer VertexTransferredBuffer { get => m_vertexTransferredBuffer; }
 
-        Vector3[] n_vertexTransferredArray;
-        public Vector3[] VertexTransferredArray { get { VertexTransferredBuffer.GetData(n_vertexTransferredArray); return n_vertexTransferredArray; } }
+        Vector3[] m_vertexTransferredArray;
+        public Vector3[] VertexTransferredArray { get { VertexTransferredBuffer.GetData(m_vertexTransferredArray); return m_vertexTransferredArray; } }
 
         RenderTexture m_velocityMap;
         RenderTexture m_normalMap;
@@ -149,8 +149,7 @@ namespace UltraCombos.VFXToolBox
                 using (var points = SamplePointGenerator.Generate
                       (mesh, m_pointCount))
                 {
-                    m_samplePointsBuffer = new ComputeBuffer
-                      (m_pointCount, SamplePoint.SizeInByte);
+                    m_samplePointsBuffer = new ComputeBuffer(m_pointCount, SamplePoint.SizeInByte);
                     m_samplePointsBuffer.SetData(points);
                 }
 
@@ -159,7 +158,7 @@ namespace UltraCombos.VFXToolBox
                 m_indexBuffer = new ComputeBuffer(mesh.Indices.Length, sizeof(int));
                 m_uvBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float)*2);
                 m_vertexTransferredBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 3);
-                n_vertexTransferredArray = new Vector3[m_pointCount];
+                m_vertexTransferredArray = new Vector3[m_pointCount];
                 m_tempArray = new Vector3[m_vertexBuffer.count];
             }
 
@@ -204,7 +203,7 @@ namespace UltraCombos.VFXToolBox
             m_tempMesh = null;
 
             m_tempArray = null;
-            n_vertexTransferredArray = null;
+            m_vertexTransferredArray = null;
         }
 
         private void OnDrawGizmos()
