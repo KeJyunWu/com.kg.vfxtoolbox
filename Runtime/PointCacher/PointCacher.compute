@@ -17,11 +17,16 @@ RWTexture2D<float4> PositionMap;
 RWTexture2D<float4> VelocityMap;
 RWTexture2D<float4> NormalMap;
 
-
 RWStructuredBuffer<float3> m_vertexBuffer;
 int m_offset;
 int m_count;
 float4x4 m_transformMatrix;
+
+float3 m_vertexOffset;
+float3 m_vertexScale;
+float3 m_vertexFlip;
+
+int m_matrixType;
 
 float3 SampleBuffer(StructuredBuffer<float3> buffer, SamplePoint sp)
 {
@@ -42,6 +47,12 @@ uint Hash(uint s)
     return s;
 }
 
+ //public enum MatrixType
+ //{
+ //    Target,
+ //    Self,
+ //    None
+ //}
 
 [numthreads(8,1,1)]
 void Transform (uint id : SV_DispatchThreadID)
@@ -50,7 +61,11 @@ void Transform (uint id : SV_DispatchThreadID)
    {
         int _index = id+m_offset;
         float3 _p = m_vertexBuffer[_index];
-        _p = mul(m_transformMatrix, float4(_p, 1)).xyz;
+        _p *= m_vertexFlip;
+        _p *= m_vertexScale;
+        if(m_matrixType != 2)
+            _p = mul(m_transformMatrix, float4(_p, 1)).xyz;
+        _p += m_vertexOffset;
         m_vertexBuffer[_index] = _p;
    }
 }

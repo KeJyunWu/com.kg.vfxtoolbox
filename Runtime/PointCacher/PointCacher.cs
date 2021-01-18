@@ -3,9 +3,17 @@ using Unity.Burst;
 using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
+using Sirenix.OdinInspector;
 
 namespace UltraCombos.VFXToolBox
 {
+    public enum MatrixType
+    {
+        Target,
+        Self,
+        None
+    }
+
     public class PointCacher : MonoBehaviour
     {
         [Header("[ Stsyem Parameter]")]
@@ -18,6 +26,29 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] MeshFilter[] m_meshes = null;
         public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
 
+        [Header("[ Vertex ]")]
+        [SerializeField] MatrixType m_matrixType =  MatrixType.None;
+        public MatrixType MatrixType { get => m_matrixType; set => m_matrixType = value; }
+
+        [ShowIf("m_matrixType", MatrixType.Target)]
+        [SerializeField] Transform m_targetTransform;
+        public Transform TargetTransform { get => m_targetTransform; set => m_targetTransform = value; }
+
+        [SerializeField] Vector3 m_offset = Vector3.zero;
+        public Vector3 Offset { get => m_offset; set => m_offset = value; }
+
+        [SerializeField] Vector3 m_scale = Vector3.one;
+        public Vector3 Scale { get => m_scale; set => m_scale = value; }
+
+        [SerializeField] bool m_flipX = false;
+        public bool FlipX { get => m_flipX; set => m_flipX = value; }
+
+        [SerializeField] bool m_flipY = false;
+        public bool FlipY { get => m_flipY; set => m_flipY = value; }
+
+        [SerializeField] bool m_flipZ = false;
+        public bool FlipZ { get => m_flipZ; set => m_flipZ = value; }
+
         [Header("[ Debug ]")]
         public bool m_drawGizmos = false;
         public float m_gizmosSize = 0.1f;
@@ -25,7 +56,6 @@ namespace UltraCombos.VFXToolBox
         [Header("[ Resources ]")]
         public ComputeShader m_pointCacherCS;
 
-        [SerializeField]
         RenderTexture m_positionMap;
         public RenderTexture PositionMap { get => m_positionMap;}
 
@@ -33,7 +63,7 @@ namespace UltraCombos.VFXToolBox
         public ComputeBuffer VertexTransferredBuffer { get => m_vertexTransferredBuffer; }
 
         Vector3[] m_vertexTransferredArray;
-        public Vector3[] VertexTransferredArray { get { VertexTransferredBuffer.GetData(m_vertexTransferredArray); return m_vertexTransferredArray; } }
+        public Vector3[] VertexTransferredArray { get { if (VertexTransferredBuffer != null) { VertexTransferredBuffer.GetData(m_vertexTransferredArray); return m_vertexTransferredArray; } else { return null; } } }
 
         RenderTexture m_velocityMap;
         RenderTexture m_normalMap;
@@ -64,14 +94,16 @@ namespace UltraCombos.VFXToolBox
 
             foreach (var source in m_meshes)
             {
-                var _offset = MeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                Matrix4x4 _matrix = m_matrixType == MatrixType.Target && m_targetTransform != null ? m_targetTransform.localToWorldMatrix : source.transform.localToWorldMatrix;
+                var _offset = MeshBake(source, _vertexOffset, _indexOffset, _matrix);
                 _vertexOffset += _offset._vOffset;
                 _indexOffset += _offset._iOffset;
             }
 
             foreach (var source in m_skinnedMeshes)
             {
-                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                Matrix4x4 _matrix = m_matrixType == MatrixType.Target && m_targetTransform != null ? m_targetTransform.localToWorldMatrix : source.transform.localToWorldMatrix;
+                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, _matrix);
                 _vertexOffset += _offset._vOffset;
                 _indexOffset += _offset._iOffset;
             }
@@ -115,6 +147,10 @@ namespace UltraCombos.VFXToolBox
                     m_pointCacherCS.SetMatrix("m_transformMatrix", _transform);
 
                     int _kernel = m_pointCacherCS.FindKernel("Transform");
+                    m_pointCacherCS.SetInt("m_matrixType", (int)m_matrixType);
+                    m_pointCacherCS.SetVector("m_vertexOffset", m_offset);
+                    m_pointCacherCS.SetVector("m_vertexScale", m_scale);
+                    m_pointCacherCS.SetVector("m_vertexFlip", new Vector3(m_flipX?-1:1, m_flipY ? -1 : 1, m_flipZ ? -1 : 1));
                     m_pointCacherCS.SetBuffer(_kernel, "m_vertexBuffer", m_vertexBuffer);
                     m_pointCacherCS.Dispatch(_kernel, Mathf.CeilToInt(_vcount / 8.0f), 1, 1);
                     return (_vcount, _icount);
