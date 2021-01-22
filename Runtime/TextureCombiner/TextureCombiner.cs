@@ -31,8 +31,8 @@ namespace UltraCombos.VFXToolBox
                 try
                 {
                     m_result = new RenderTexture[2];
-                    m_result[READ] = Common.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
-                    m_result[WRITE] = Common.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                    m_result[READ] = RenderTextureUtil.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                    m_result[WRITE] = RenderTextureUtil.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
                 }
                 catch { }
             }
@@ -46,8 +46,8 @@ namespace UltraCombos.VFXToolBox
                             m_result[i].Release();
                     }
 
-                    m_result[READ] = Common.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
-                    m_result[WRITE] = Common.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                    m_result[READ] = RenderTextureUtil.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                    m_result[WRITE] = RenderTextureUtil.CreateRT(m_textures[0].width, m_textures[0].height, 0, m_textures[0].volumeDepth, RenderTextureFormat.ARGBFloat, FilterMode.Point);
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace UltraCombos.VFXToolBox
                         m_shader.SetTexture(m_coreKernel, "m_intput2", m_textures[i]);
                         m_shader.SetTexture(m_coreKernel, "m_output", m_result[WRITE]);
                         m_shader.Dispatch(m_coreKernel, m_dispatchX / NUM_THREADS, m_dispatchY / NUM_THREADS, m_dispatchZ / NUM_THREADS);
-                        Common.Swap(m_result);
+                        RenderTextureUtil.Swap(m_result);
                     }
                 }
             }
