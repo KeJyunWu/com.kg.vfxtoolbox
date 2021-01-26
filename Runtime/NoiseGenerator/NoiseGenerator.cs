@@ -48,10 +48,10 @@ public class NoiseGenerator : MonoBehaviour
     [Range(0, 5)] public float m_effect_FBM_Gain = 1;
 
     [Header("Mask")] //5
-    [Range(0, 5)] public float m_effect_Mask_ResultMul = 1;
+    [Range(0, 30)] public float m_effect_Mask_ResultMul = 1;
     [Range(1, 200)] public float m_effect_Mask_PixelsNum = 3;
     [Range(0, 30)] public float m_effect_Mask_NoiseScale = 3;
-    [Range(0, 1)] public float m_effect_Mask_NoiseScrollSpeed = 1;
+    public Vector2 m_effect_Mask_NoiseScrollSpeed = Vector2.zero;
     [Range(0, 10)] public float m_effect_Mask_ResultPower = 3;
 
     [SerializeField]
@@ -138,7 +138,7 @@ public class NoiseGenerator : MonoBehaviour
             m_mat.SetFloat("_Effect_Mask_ResultMul", m_effect_Mask_ResultMul);
             m_mat.SetFloat("_Effect_Mask_PixelsNum", m_effect_Mask_PixelsNum);
             m_mat.SetFloat("_Effect_Mask_NoiseScale", m_effect_Mask_NoiseScale);
-            m_mat.SetFloat("_Effect_Mask_NoiseScrollSpeed", m_effect_Mask_NoiseScrollSpeed);
+            m_mat.SetVector("_Effect_Mask_NoiseScrollSpeed", m_effect_Mask_NoiseScrollSpeed);
             m_mat.SetFloat("_Effect_Mask_ResultPower", m_effect_Mask_ResultPower);
         }
 
