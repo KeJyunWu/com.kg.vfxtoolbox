@@ -1,46 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using Sirenix.OdinInspector;
 
 namespace UltraCombos.VFXToolBox
 {
     [ExecuteInEditMode]
-    public class GradientTexture : MonoBehaviour
+    public class GradientTexture : GTBase
     {
-        [SerializeField, Range(1, 256)] int m_resolution = 128;
-        public int Resolution { get { return m_resolution; } set { m_resolution = value; } }
+        [SerializeField] Gradient m_gradient;
+        public Gradient Gradient { get { return m_gradient; } set { m_gradient = value; } }
 
-        [SerializeField] Gradient m_gradientColor;
-        public Gradient GradientColor { get { return m_gradientColor; } set { m_gradientColor = value; } }
-
-        [SerializeField]
+        [SerializeField, ReadOnly]
         Texture2D m_result;
         public Texture2D Result { get { return m_result; } }
 
-        private void Reset()
-        {
-            if (m_result != null)
-            {
-                if (Application.isPlaying)
-                    Destroy(m_result);
-                else
-                    DestroyImmediate(m_result);
-            }
+        public UnityEvent<Texture2D> OnEvent = new UnityEvent<Texture2D>();
 
-            m_result = new Texture2D(m_resolution, 1, TextureFormat.ARGB32, false);
+        void InternalUpdate()
+        {
+            UpdateTexture(ref m_result, m_gradient);
+            OnEvent?.Invoke(m_result);
         }
 
-        // Update is called once per frame
+        private void OnValidate()
+        {
+            InternalUpdate();
+        }
+
         void Update()
         {
-            if (m_result == null || m_result.width != m_resolution)
-                Reset();
-
-            for (var i = 0; i < m_resolution; i++)
-            {
-                m_result.SetPixel(i, 0, m_gradientColor.Evaluate((float)i / (float)m_resolution));
-            }
-            m_result.Apply(false);
+            InternalUpdate();
         }
     }
 }
