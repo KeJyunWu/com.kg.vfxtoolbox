@@ -3,12 +3,13 @@ using Unity.Burst;
 using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
+using Sirenix.OdinInspector;
 
 namespace UltraCombos.VFXToolBox
 {
     public class UltraSDF : MonoBehaviour
     {
-        [Header("[ Stsyem Parameter]")]
+        [TitleGroup("Stsyem Parameter")]
         [SerializeField] int m_resolution = 64;
         public int Resolution { get => m_resolution; set => m_resolution = value; }
 
@@ -18,9 +19,11 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] bool m_doSDF = false;
         public bool DoSDF { get => m_doSDF; set => m_doSDF = value; }
 
+        [ShowIf("m_doSDF"), Indent]
         [SerializeField] float m_postProcessThickness = 0.01f;
         public float PostProcessThickness { get => m_postProcessThickness; set => m_postProcessThickness = value; }
 
+        [Space]
         [SerializeField] Transform m_container;
         public Transform Container { get => m_container; set => m_container = value; }
 
@@ -30,16 +33,18 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] MeshFilter[] m_meshes = null;
         public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
 
-        [Header("[ Debug ]")]
-        public bool m_drawGizmos = false;
-        public float m_gizmosSize = 0.1f;
+        [TitleGroup("Debug")]
+        public bool m_drawContainer = false;
+        public bool m_drawVertex = false;
+        [ShowIf("m_drawVertex"),Indent, LabelText("Size")]
+        public float m_vertexSize = 0.1f;
         public Material m_viewerMat;
+        [ShowIf("m_viewerMat"), Indent, LabelText("Property Name")]
         public string m_viewerMatPropertyName = "_Texture3D";
 
-        [Header("[ Resources ]")]
-        public ComputeShader m_transferCS;
-        public ComputeShader m_MtVImplementationCS;
-        public ComputeShader m_JFAImplementationCS;
+        [SerializeField, HideInInspector] ComputeShader m_transferCS;
+        [SerializeField, HideInInspector] ComputeShader m_MtVImplementationCS;
+        [SerializeField, HideInInspector] ComputeShader m_JFAImplementationCS;
 
         RenderTexture m_result;
         public RenderTexture Result { get => m_result; set => m_result = value; }
@@ -161,12 +166,17 @@ namespace UltraCombos.VFXToolBox
 
         private void OnDrawGizmos()
         {
-            if (m_vertexBuffer != null && m_drawGizmos)
+            if(m_drawContainer && m_container!=null)
+            {
+                Gizmos.DrawWireCube(m_container.transform.position, m_container.transform.localScale);
+            }
+
+            if (m_vertexBuffer != null && m_drawVertex)
             {
                 m_vertexBuffer.GetData(m_tempArray);
                 for (var i = 0; i < m_tempArray.Length; i++)
                 {
-                    Gizmos.DrawWireCube(m_tempArray[i], Vector3.one * m_gizmosSize);
+                    Gizmos.DrawWireCube(m_tempArray[i], Vector3.one * m_vertexSize);
                 }
             }
         }

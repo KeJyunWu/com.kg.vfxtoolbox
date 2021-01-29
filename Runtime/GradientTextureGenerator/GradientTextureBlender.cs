@@ -7,17 +7,15 @@ namespace UltraCombos.VFXToolBox
 {
     public class GradientTextureBlender : GTBase
     {
+        [SerializeField, LabelText("Select Index")] int m_index = 0;
+        public int Index { get { return m_index; } set { m_index = value; } }
+
         [SerializeField, GradientUsage(true, ColorSpace.Linear)]
         List<Gradient> m_gradient = new List<Gradient>();
-
-        [Space]
-        [SerializeField] int m_index = 0;
-        public int Index { get { return m_index; } set { m_index = value; } }
 
         [SerializeField] float m_tweenSpeed = 1;
         public float TweenSpeed { get { return m_tweenSpeed; } set { m_tweenSpeed = value; } }
 
-        [Space]
         [SerializeField] RenderTexture m_outputRT;
         public RenderTexture OutputRT { get { return m_outputRT; } }
 

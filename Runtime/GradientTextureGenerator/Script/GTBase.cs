@@ -31,12 +31,15 @@ namespace UltraCombos.VFXToolBox
                 _tex = CreateTex();
             }
 
-            for (int i = 0; i < m_resolution; i++)
+            try
             {
-                _tex.SetPixel(i, 0, _gradient.Evaluate(i / (float)m_resolution));
+                for (int i = 0; i < m_resolution; i++)
+                {
+                    _tex.SetPixel(i, 0, _gradient.Evaluate(i / (float)m_resolution));
+                }
+                _tex.Apply();
             }
-
-            _tex.Apply();
+            catch { }
         }
     }
 }

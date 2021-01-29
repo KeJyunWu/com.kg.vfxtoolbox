@@ -16,8 +16,8 @@ namespace UltraCombos.VFXToolBox
 
     public class PointCacher : MonoBehaviour
     {
-        [Header("[ Stsyem Parameter]")]
-        [SerializeField] int m_pointCount;
+        [TitleGroup("Stsyem Parameter")]
+        [SerializeField] int m_pointCount = 5;
         public int PointCount { get => m_pointCount; set => m_pointCount = value; }
 
         [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshes = null;
@@ -26,7 +26,7 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] MeshFilter[] m_meshes = null;
         public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
 
-        [Header("[ Vertex ]")]
+        [TitleGroup("Data Post Process")]
         [SerializeField] MatrixType m_matrixType =  MatrixType.None;
         public MatrixType MatrixType { get => m_matrixType; set => m_matrixType = value; }
 
@@ -49,12 +49,12 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] bool m_flipZ = false;
         public bool FlipZ { get => m_flipZ; set => m_flipZ = value; }
 
-        [Header("[ Debug ]")]
-        public bool m_drawGizmos = false;
+        [TitleGroup("Debug")]
+        public bool m_drawVertex = false;
+        [ShowIf("m_drawVertex"), Indent, LabelText("Size")]
         public float m_gizmosSize = 0.1f;
 
-        [Header("[ Resources ]")]
-        public ComputeShader m_pointCacherCS;
+        [SerializeField, HideInInspector] ComputeShader m_pointCacherCS;
 
         RenderTexture m_positionMap;
         public RenderTexture PositionMap { get => m_positionMap;}
@@ -244,7 +244,7 @@ namespace UltraCombos.VFXToolBox
 
         private void OnDrawGizmos()
         {
-            if (m_vertexBuffer != null && m_drawGizmos)
+            if (m_vertexBuffer != null && m_drawVertex)
             {
                 m_vertexBuffer.GetData(m_tempArray);
                 for (var i = 0; i < m_tempArray.Length; i++)

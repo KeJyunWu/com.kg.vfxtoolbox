@@ -4,7 +4,8 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - m_transferCS: {fileID: 7200000, guid: ab607617b1fe99d47a507b171cf9e454, type: 3}
+  - m_targetTransform: {instanceID: 0}
+  - m_pointCacherCS: {fileID: 7200000, guid: ab607617b1fe99d47a507b171cf9e454, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
