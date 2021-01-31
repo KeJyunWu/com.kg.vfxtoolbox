@@ -10,7 +10,7 @@ namespace UltraCombos.VFXToolBox
         [SerializeField, LabelText("Select Index")] int m_index = 0;
         public int Index { get { return m_index; } set { m_index = value; } }
 
-        [SerializeField, GradientUsage(true, ColorSpace.Linear)]
+        [SerializeField]
         List<Gradient> m_gradient = new List<Gradient>();
 
         [SerializeField] float m_tweenSpeed = 1;
