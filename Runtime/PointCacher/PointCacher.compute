@@ -10,21 +10,28 @@ struct SamplePoint
 
 uint SampleCount;
 StructuredBuffer<SamplePoint> SamplePoints;
-StructuredBuffer<float3> PositionBuffer;
-RWStructuredBuffer<float3> PositionTransferredBuffer;
+StructuredBuffer<float3> PositionBuffer1;
+StructuredBuffer<float3> PositionBuffer2;
+StructuredBuffer<float3> NormalBuffer;
+
+RWStructuredBuffer<float3> PositionSampledBuffer;
+RWStructuredBuffer<float3> NormalSampledBuffer;
+RWStructuredBuffer<float3> VelocityBuffer;
 
 RWTexture2D<float4> PositionMap;
 RWTexture2D<float4> VelocityMap;
 RWTexture2D<float4> NormalMap;
 
-RWStructuredBuffer<float3> m_vertexBuffer;
+RWStructuredBuffer<float3> PositionTransformBuffer;
+RWStructuredBuffer<float3> NormalTransformBuffer;
 int m_offset;
 int m_count;
-float4x4 m_transformMatrix;
+float4x4 m_objectToWorldMatrix;
+float4x4 m_worldToObjectMatrix;
 
-float3 m_vertexOffset;
-float3 m_vertexScale;
-float3 m_vertexFlip;
+float3 m_positionOffset;
+float3 m_positionScale;
+float3 m_positionFlip;
 
 int m_matrixType;
 
@@ -60,13 +67,20 @@ void Transform (uint id : SV_DispatchThreadID)
    if(id<m_count)
    {
         int _index = id+m_offset;
-        float3 _p = m_vertexBuffer[_index];
-        _p *= m_vertexFlip;
-        _p *= m_vertexScale;
-        if(m_matrixType != 2)
-            _p = mul(m_transformMatrix, float4(_p, 1)).xyz;
-        _p += m_vertexOffset;
-        m_vertexBuffer[_index] = _p;
+        float3 _p = PositionTransformBuffer[_index];
+        float3 _n = NormalTransformBuffer[_index];
+
+        _p *= m_positionFlip;
+        _p *= m_positionScale;
+        if (m_matrixType != 2)
+        {
+            _p = mul(m_objectToWorldMatrix, float4(_p, 1)).xyz;
+            _n = mul(m_objectToWorldMatrix, float4(_n, 0)).xyz;
+        }
+        _p += m_positionOffset;
+
+        PositionTransformBuffer[_index] = _p;
+        NormalTransformBuffer[_index] = _n;
    }
 }
 
@@ -74,14 +88,23 @@ void Transform (uint id : SV_DispatchThreadID)
 void TransferData(uint2 id : SV_DispatchThreadID)
 {
     uint si = Hash(id.x + id.y * 65536) % SampleCount;
-    SamplePoint sp = SamplePoints[si];
+    SamplePoint _sp = SamplePoints[si];
 
-    float3 p1 = SampleBuffer(PositionBuffer, sp);
+    float3 _p1 = SampleBuffer(PositionBuffer1, _sp);
+    float3 _p2 = SampleBuffer(PositionBuffer2, _sp);
+    float3 _n1 = normalize(SampleBuffer(NormalBuffer, _sp));
+    float3 _v = _p1 - _p2;
 
-    uint _width, height;
-   PositionMap.GetDimensions(_width, height);
+    uint _width, _height;
+   PositionMap.GetDimensions(_width, _height);
 
-    PositionTransferredBuffer[id.x + id.y*_width]  = p1;
-    //PositionTransferredBuffer[id.x + id.y*_width]  = PositionBuffer[id.x + id.y*_width];
-    PositionMap[id] = float4(p1, 1);
+   uint _bufferId = id.x + id.y * _width;
+   PositionSampledBuffer[_bufferId] = _p1;
+   NormalSampledBuffer[_bufferId] = _n1;
+   VelocityBuffer[_bufferId]  = _v;
+
+
+   PositionMap[id] = float4(_p1, 1);
+   VelocityMap[id] = float4(_v, 0);
+   NormalMap[id] = float4(_n1, 0);
 }
