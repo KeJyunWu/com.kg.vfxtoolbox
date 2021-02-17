@@ -9,7 +9,7 @@ namespace UltraCombos.VFXToolBox
 {
     public class UltraSDF : MonoBehaviour
     {
-        [TitleGroup("Stsyem Parameter")]
+        [TitleGroup("Stsyem")]
         [SerializeField] int m_resolution = 64;
         public int Resolution { get => m_resolution; set => m_resolution = value; }
 

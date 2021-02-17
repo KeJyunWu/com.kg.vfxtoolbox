@@ -1,5 +1,6 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Inject
+#pragma kernel Decay
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
@@ -9,6 +10,13 @@ StructuredBuffer<float3> m_positionSampledBuffer;
 
 float3 m_containerCenter;
 float3 m_containerScale;
+float m_drag;
+
+// return 1 if v inside the box, return 0 otherwise
+float insideBox3D(float3 v, float3 bottomLeft, float3 topRight) {
+	float3 s = step(bottomLeft, v) - step(topRight, v);
+	return s.x * s.y * s.z;
+}
 
 [numthreads(8,1,1)]
 void Inject (uint3 id : SV_DispatchThreadID)
@@ -20,8 +28,18 @@ void Inject (uint3 id : SV_DispatchThreadID)
 	uint _width, _height, _depth;
 	m_result.GetDimensions(_width, _height, _depth);
 
-	bool _bInject = true;
+	float3 _bottomLeft = m_containerCenter - m_containerScale * 0.5;
+	float3 _topRight = m_containerCenter + m_containerScale * 0.5;
 
+	if (insideBox3D(_uv, _bottomLeft, _topRight) == 1)
+	{
+		float3 _sampleUV = ((_uv - _bottomLeft) / m_containerScale.x) * float3(_width, _height, _depth);
+		m_result[_sampleUV] = float4(_velocity,1);
+	}
+}
 
-
+[numthreads(8, 8, 8)]
+void Decay(uint3 id : SV_DispatchThreadID)
+{
+	m_result[id] *= m_drag;
 }

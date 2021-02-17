@@ -22,7 +22,7 @@ namespace UltraCombos.VFXToolBox
 
     public class PointCacher : MonoBehaviour
     {
-        [TitleGroup("System Parameter")]
+        [TitleGroup("System")]
         [SerializeField] int m_pointCount = 5;
         public int PointCount { get => m_pointCount; set => m_pointCount = value; }
 
