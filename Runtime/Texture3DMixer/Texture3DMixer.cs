@@ -14,6 +14,16 @@ namespace UltraCombos.VFXToolBox
         public RenderTexture m_sourceRT;
         [HideIf("m_DataFormat", TextureType.RenderTexture)]
         public Texture3D m_source3D;
+
+        public Texture3DMixerData(TextureType _type, Texture _tex )
+        {
+            if (_tex == null)
+                return;
+            if (_type == TextureType.RenderTexture)
+                m_sourceRT = (RenderTexture)_tex;
+            else
+                m_source3D = (Texture3D)_tex;
+        }
     }
 
     public class Texture3DMixer : MonoBehaviour
@@ -22,7 +32,7 @@ namespace UltraCombos.VFXToolBox
         const int WRITE = 1;
         const int NUM_THREADS = 8;
 
-        public RenderTexture Result { get => m_swapBuffer[READ]; }
+        public RenderTexture Result { get => m_swapBuffer != null ? m_swapBuffer [READ] : null; }
 
         [TitleGroup("Stsyem Parameter")]
         [SerializeField] Vector3Int m_resolution = new Vector3Int(128, 128, 128);
