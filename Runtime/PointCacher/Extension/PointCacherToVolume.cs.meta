@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a5722063229f8174bb4eca8174c4f8ce
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_pointCacher: {instanceID: 0}
+  - m_container: {instanceID: 0}
+  - m_computeShader: {fileID: 7200000, guid: d20ec653534fe4649b05d9ea82a30ba6, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

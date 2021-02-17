@@ -50,7 +50,8 @@ void JFA(uint3 id : SV_DispatchThreadID) {
 void Postprocess(uint3 id : SV_DispatchThreadID) {
 	half3 seedPos = Voxels[id].xyz;
 	half dist = (distance(seedPos, half3(id)) / half(dispatchCubeSide)) - postProcessThickness;
-	Voxels[id] = half4(dist, dist, dist, 1.0);
+	half3 ndir = normalize(seedPos - half3(id));
+	Voxels[id] = half4(dist, ndir);
 }
 
 // more of a shell, really

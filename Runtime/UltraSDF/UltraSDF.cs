@@ -42,6 +42,10 @@ namespace UltraCombos.VFXToolBox
         [ShowIf("m_viewerMat"), Indent, LabelText("Property Name")]
         public string m_viewerMatPropertyName = "_Texture3D";
 
+        [TitleGroup("Info")]
+        [SerializeField, ReadOnly, LabelText("SDF Pixel Format")]
+        string m_SDFPixelFormat = "X : Distance, YZW : Direction";
+
         [SerializeField, HideInInspector] ComputeShader m_transferCS;
         [SerializeField, HideInInspector] ComputeShader m_MtVImplementationCS;
         [SerializeField, HideInInspector] ComputeShader m_JFAImplementationCS;
