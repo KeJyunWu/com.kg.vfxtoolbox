@@ -9,7 +9,7 @@ namespace UltraCombos.VFXToolBox
     [System.Serializable]
     public class Texture3DMixerData
     {
-        public TextureType m_DataFormat;
+        public TextureType m_dataFormat;
         [HideIf("m_DataFormat", TextureType.Texture3D)]
         public RenderTexture m_sourceRT;
         [HideIf("m_DataFormat", TextureType.RenderTexture)]
@@ -17,6 +17,7 @@ namespace UltraCombos.VFXToolBox
 
         public Texture3DMixerData(TextureType _type, Texture _tex )
         {
+            m_dataFormat = _type;
             if (_tex == null)
                 return;
             if (_type == TextureType.RenderTexture)
@@ -90,7 +91,7 @@ namespace UltraCombos.VFXToolBox
                 BufferCheck();
                 var _filter =
                     from _source in m_sources
-                    where _source.m_DataFormat == TextureType.Texture3D ? (_source.m_source3D != null ) : (_source.m_sourceRT != null && _source.m_sourceRT.dimension == UnityEngine.Rendering.TextureDimension.Tex3D && _source.m_sourceRT.enableRandomWrite)
+                    where _source.m_dataFormat == TextureType.Texture3D ? (_source.m_source3D != null ) : (_source.m_sourceRT != null && _source.m_sourceRT.dimension == UnityEngine.Rendering.TextureDimension.Tex3D && _source.m_sourceRT.enableRandomWrite)
                     select _source;
 
                 List<Texture3DMixerData> _data = _filter.ToList();
@@ -108,7 +109,7 @@ namespace UltraCombos.VFXToolBox
                     {
                         m_shader.SetTexture(m_coreKernel, "m_intput1", m_swapBuffer[READ]);
 
-                        if (_data[i].m_DataFormat == TextureType.RenderTexture)
+                        if (_data[i].m_dataFormat == TextureType.RenderTexture)
                             m_shader.SetTexture(m_coreKernel, "m_intput2", _data[i].m_sourceRT);
                         else
                             m_shader.SetTexture(m_coreKernel, "m_intput2", _data[i].m_source3D);

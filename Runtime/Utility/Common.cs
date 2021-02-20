@@ -164,5 +164,19 @@ namespace UltraCombos.VFXToolBox
             _rt.Create();
             return _rt;
         }
+
+        public static RenderTexture CreateRT(RenderTexture _source)
+        {
+            RenderTexture _rt = new RenderTexture(_source);
+            _rt.Create();
+            return _rt;
+        }
+
+        public static RenderTexture CreateRT(RenderTextureDescriptor _descriptor)
+        {
+            RenderTexture _rt = new RenderTexture(_descriptor);
+            _rt.Create();
+            return _rt;
+        }
     }
 }
