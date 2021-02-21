@@ -15,6 +15,9 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] Transform m_container;
         public Transform Container { get => m_container; set => m_container = value; }
 
+        [SerializeField] RenderTexture m_result;
+        public RenderTexture Result { get => m_result; set => m_result = value; }
+
         [TitleGroup("Velocity Volume")]
         [SerializeField, Range(0, 4)] float m_drag = 0.1f;
         public float Drag { get => m_drag; set => m_drag = value; }
@@ -26,20 +29,19 @@ namespace UltraCombos.VFXToolBox
         public string m_viewerMatPropertyName = "_Texture3D";
 
         [SerializeField, HideInInspector] ComputeShader m_computeShader;
-
-        RenderTexture m_result;
-        public RenderTexture Result { get => m_result; set => m_result = value; }
-
         // Start is called before the first frame update
         void Start()
-        { 
-            m_result = new RenderTexture(m_resolution, m_resolution,
-                    0, RenderTextureFormat.ARGBFloat);
-            m_result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-            m_result.enableRandomWrite = true;
-            m_result.useMipMap = false;
-            m_result.volumeDepth = m_resolution;
-            m_result.Create();
+        {
+            if (m_result == null)
+            {
+                m_result = new RenderTexture(m_resolution, m_resolution,
+                        0, RenderTextureFormat.ARGBFloat);
+                m_result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
+                m_result.enableRandomWrite = true;
+                m_result.useMipMap = false;
+                m_result.volumeDepth = m_resolution;
+                m_result.Create();
+            }
         }
 
         // Update is called once per frame

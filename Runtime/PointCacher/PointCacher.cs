@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.Collections;
 using Unity.Jobs;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 
 namespace UltraCombos.VFXToolBox
 {
@@ -26,11 +27,11 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] int m_pointCount = 5;
         public int PointCount { get => m_pointCount; set => m_pointCount = value; }
 
-        [SerializeField] SkinnedMeshRenderer[] m_skinnedMeshes = null;
-        public SkinnedMeshRenderer[] SkinnedMeshes { get => m_skinnedMeshes; set => m_skinnedMeshes = value; }
+        [SerializeField] List<SkinnedMeshRenderer> m_skinnedMeshes = new List<SkinnedMeshRenderer>();
+        public List<SkinnedMeshRenderer> SkinnedMeshes { get => m_skinnedMeshes; set => m_skinnedMeshes = value; }
 
-        [SerializeField] MeshFilter[] m_meshes = null;
-        public MeshFilter[] Meshes { get => m_meshes; set => m_meshes = value; }
+        [SerializeField] List<MeshFilter> m_meshes = new List<MeshFilter>();
+        public List<MeshFilter> Meshes { get => m_meshes; set => m_meshes = value; }
 
         [TitleGroup("Data Post Process")]
         [SerializeField] MatrixType m_matrixType =  MatrixType.None;
@@ -98,6 +99,11 @@ namespace UltraCombos.VFXToolBox
 
         private void OnEnable() => InitializeInternals();
         private void OnDisable() => DisposeInternals();
+
+        public void Reset()
+        {
+            DisposeInternals();
+        }
 
         private void OnValidate()
         {
