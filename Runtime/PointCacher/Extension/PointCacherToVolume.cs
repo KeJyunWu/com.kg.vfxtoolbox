@@ -88,11 +88,13 @@ namespace UltraCombos.VFXToolBox
             m_result = null;
         }
 
+#if UNITY_EDITOR
         [OnInspectorGUI]
         private void OnInspectorGUI()
         {
             UnityEditor.EditorGUILayout.Space();
             UnityEditor.EditorGUILayout.HelpBox("If result(Output RT) is not specified or the format of it is not 3D volume, the script will regenerate one according to the resolution on the inspector", UnityEditor.MessageType.Info);
         }
+#endif
     }
 }
