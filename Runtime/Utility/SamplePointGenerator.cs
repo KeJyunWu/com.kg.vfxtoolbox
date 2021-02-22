@@ -118,8 +118,8 @@ namespace UltraCombos.VFXToolBox
                         if (offs + 1 < Output.Length)
                             Output[offs++] =
                               new SamplePoint(i1, 1 - r.x - r.y, i2, r.x, i3, r.y);
-                        else
-                            Debug.Log(offs++);
+                        else  
+                        { }
                     }
                 }
             }
