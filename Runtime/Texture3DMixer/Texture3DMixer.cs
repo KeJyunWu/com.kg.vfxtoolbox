@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace UltraCombos.VFXToolBox
 {
@@ -10,9 +10,9 @@ namespace UltraCombos.VFXToolBox
     public class Texture3DMixerData
     {
         public TextureType m_dataFormat;
-        [HideIf("m_DataFormat", TextureType.Texture3D)]
+        [HideIf("m_dataFormat", TextureType.Texture3D)]
         public RenderTexture m_sourceRT;
-        [HideIf("m_DataFormat", TextureType.RenderTexture)]
+        [HideIf("m_dataFormat", TextureType.RenderTexture)]
         public Texture3D m_source3D;
 
         public Texture3DMixerData(TextureType _type, Texture _tex )
@@ -42,6 +42,9 @@ namespace UltraCombos.VFXToolBox
         [SerializeField]
         List<Texture3DMixerData> m_sources = new List<Texture3DMixerData>();
         public List<Texture3DMixerData> Sources { get => m_sources; set => m_sources = value; }
+
+        [TitleGroup("Event")]
+        public UnityEvent<RenderTexture> OnEvent = new UnityEvent<RenderTexture>();
 
         [TitleGroup("Debug")]
         public Material m_viewerMat;
@@ -119,6 +122,8 @@ namespace UltraCombos.VFXToolBox
                         RenderTextureUtil.Swap(m_swapBuffer);
                     }
                 }
+
+                OnEvent?.Invoke(Result);
 
                 if (m_viewerMat)
                 {

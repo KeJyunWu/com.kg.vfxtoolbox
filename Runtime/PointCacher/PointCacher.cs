@@ -219,6 +219,9 @@ namespace UltraCombos.VFXToolBox
 
         void InitializeInternals()
         {
+            if (m_meshes.Count == 0 && m_skinnedMeshes.Count == 0)
+                return;
+
             using (var mesh = new CombinedMesh(m_meshes.Select(smr => smr.sharedMesh).ToArray(), m_skinnedMeshes))
             {
                 using (var points = SamplePointGenerator.Generate

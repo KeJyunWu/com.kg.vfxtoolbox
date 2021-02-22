@@ -6,9 +6,6 @@ namespace UltraCombos.VFXToolBox
     public class PointCacherToVolume : MonoBehaviour
     {
         [TitleGroup("System")]
-        [SerializeField] RenderTexture m_result;
-        public RenderTexture Result { get => m_result; set => m_result = value; }
-
         [SerializeField] int m_resolution = 128;
         public int Resolution { get => m_resolution; set => m_resolution = value; }
 
@@ -28,20 +25,20 @@ namespace UltraCombos.VFXToolBox
         [ShowIf("m_viewerMat"), Indent, LabelText("Property Name")]
         public string m_viewerMatPropertyName = "_Texture3D";
 
+        RenderTexture m_result;
+        public RenderTexture Result { get => m_result; set => m_result = value; }
+
         [SerializeField, HideInInspector] ComputeShader m_computeShader;
         // Start is called before the first frame update
-        void Start()
+        void Awake()
         {
-            if (m_result == null || m_result.dimension != UnityEngine.Rendering.TextureDimension.Tex3D)
-            {
-                m_result = new RenderTexture(m_resolution, m_resolution,
-                        0, RenderTextureFormat.ARGBFloat);
-                m_result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-                m_result.enableRandomWrite = true;
-                m_result.useMipMap = false;
-                m_result.volumeDepth = m_resolution;
-                m_result.Create();
-            }
+            m_result = new RenderTexture(m_resolution, m_resolution,
+                    0, RenderTextureFormat.ARGBFloat);
+            m_result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
+            m_result.enableRandomWrite = true;
+            m_result.useMipMap = false;
+            m_result.volumeDepth = m_resolution;
+            m_result.Create();
         }
 
         // Update is called once per frame
@@ -87,14 +84,5 @@ namespace UltraCombos.VFXToolBox
             m_result?.Release();
             m_result = null;
         }
-
-#if UNITY_EDITOR
-        [OnInspectorGUI]
-        private void OnInspectorGUI()
-        {
-            UnityEditor.EditorGUILayout.Space();
-            UnityEditor.EditorGUILayout.HelpBox("If result(Output RT) is not specified or the format of it is not 3D volume, the script will regenerate one according to the resolution on the inspector", UnityEditor.MessageType.Info);
-        }
-#endif
     }
 }
