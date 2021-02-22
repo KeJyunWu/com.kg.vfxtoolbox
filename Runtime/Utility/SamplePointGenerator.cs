@@ -115,8 +115,11 @@ namespace UltraCombos.VFXToolBox
                         var r = rnd.NextFloat2();
                         if (r.x + r.y > 1) r = 1 - r;
 
-                        Output[offs++] =
-                          new SamplePoint(i1, 1 - r.x - r.y, i2, r.x, i3, r.y);
+                        if (offs + 1 < Output.Length)
+                            Output[offs++] =
+                              new SamplePoint(i1, 1 - r.x - r.y, i2, r.x, i3, r.y);
+                        else
+                            Debug.Log(offs++);
                     }
                 }
             }

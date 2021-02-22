@@ -6,6 +6,9 @@ namespace UltraCombos.VFXToolBox
     public class PointCacherToVolume : MonoBehaviour
     {
         [TitleGroup("System")]
+        [SerializeField] RenderTexture m_result;
+        public RenderTexture Result { get => m_result; set => m_result = value; }
+
         [SerializeField] int m_resolution = 128;
         public int Resolution { get => m_resolution; set => m_resolution = value; }
 
@@ -14,9 +17,6 @@ namespace UltraCombos.VFXToolBox
 
         [SerializeField] Transform m_container;
         public Transform Container { get => m_container; set => m_container = value; }
-
-        [SerializeField] RenderTexture m_result;
-        public RenderTexture Result { get => m_result; set => m_result = value; }
 
         [TitleGroup("Velocity Volume")]
         [SerializeField, Range(0, 4)] float m_drag = 0.1f;
@@ -32,7 +32,7 @@ namespace UltraCombos.VFXToolBox
         // Start is called before the first frame update
         void Start()
         {
-            if (m_result == null)
+            if (m_result == null || m_result.dimension != UnityEngine.Rendering.TextureDimension.Tex3D)
             {
                 m_result = new RenderTexture(m_resolution, m_resolution,
                         0, RenderTextureFormat.ARGBFloat);
@@ -86,6 +86,13 @@ namespace UltraCombos.VFXToolBox
         {
             m_result?.Release();
             m_result = null;
+        }
+
+        [OnInspectorGUI]
+        private void OnInspectorGUI()
+        {
+            UnityEditor.EditorGUILayout.Space();
+            UnityEditor.EditorGUILayout.HelpBox("If result(Output RT) is not specified or the format of it is not 3D volume, the script will regenerate one according to the resolution on the inspector", UnityEditor.MessageType.Info);
         }
     }
 }
