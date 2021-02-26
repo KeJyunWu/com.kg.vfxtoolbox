@@ -33,6 +33,12 @@ namespace UltraCombos.VFXToolBox
         [SerializeField] List<MeshFilter> m_meshes = new List<MeshFilter>();
         public List<MeshFilter> Meshes { get => m_meshes; set => m_meshes = value; }
 
+        [SerializeField] bool m_requestBufferData = false;
+        public bool RequestBufferData { get => m_requestBufferData; set => m_requestBufferData = value; }
+
+        [SerializeField] bool m_requestRTData = false;
+        public bool RequestRTData { get => m_requestRTData; set => m_requestRTData = value; }
+
         [TitleGroup("Data Post Process")]
         [SerializeField] MatrixType m_matrixType =  MatrixType.None;
         public MatrixType MatrixType { get => m_matrixType; set => m_matrixType = value; }
@@ -192,13 +198,8 @@ namespace UltraCombos.VFXToolBox
             }
         }
 
-        void TransferData()
+        void SetTransferKernel(int _kernel)
         {
-            int _kernel = m_pointCacherCS.FindKernel("TransferData");
-
-            m_pointCacherCS.SetInt("SampleCount", m_pointCount);
-            m_pointCacherCS.SetFloat("FrameRate", 1 / Time.deltaTime);
-
             m_pointCacherCS.SetBuffer(_kernel, "SamplePoints", m_samplePointsBuffer);
             m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer1", m_rawPositionBuffer.m_positionBuffer1);
             m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer2", m_rawPositionBuffer.m_positionBuffer2);
@@ -211,10 +212,28 @@ namespace UltraCombos.VFXToolBox
             m_pointCacherCS.SetTexture(_kernel, "PositionMap", m_positionMap);
             m_pointCacherCS.SetTexture(_kernel, "VelocityMap", m_velocityMap);
             m_pointCacherCS.SetTexture(_kernel, "NormalMap", m_normalMap);
+        }
 
-            var width = m_positionMap.width;
-            var height = m_positionMap.height;
-            m_pointCacherCS.Dispatch(_kernel, width / 8, height / 8, 1);
+        void TransferData()
+        {
+            m_pointCacherCS.SetInt("SampleCount", m_pointCount);
+            m_pointCacherCS.SetFloat("FrameRate", 1 / Time.deltaTime);
+
+            if (m_requestRTData)
+            {
+                int _kernel = m_pointCacherCS.FindKernel("TransferData_RT");
+                SetTransferKernel(_kernel);
+                var width = m_positionMap.width;
+                var height = m_positionMap.height;
+                m_pointCacherCS.Dispatch(_kernel, width / 8, height / 8, 1);
+            }
+
+            if(m_requestBufferData)
+            {
+                int _kernel = m_pointCacherCS.FindKernel("TransferData_Buffer");
+                SetTransferKernel(_kernel);
+                m_pointCacherCS.Dispatch(_kernel, m_pointCount/8, 1, 1);
+            }
         }
 
         void InitializeInternals()

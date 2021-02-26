@@ -1,6 +1,7 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Transform
-#pragma kernel TransferData
+#pragma kernel TransferData_RT
+#pragma kernel TransferData_Buffer
 
 struct SamplePoint
 {
@@ -85,7 +86,7 @@ void Transform (uint id : SV_DispatchThreadID)
 }
 
 [numthreads(8, 8, 1)]
-void TransferData(uint2 id : SV_DispatchThreadID)
+void TransferData_RT(uint2 id : SV_DispatchThreadID)
 {
     uint si = Hash(id.x + id.y * 65536) % SampleCount;
     SamplePoint _sp = SamplePoints[si];
@@ -95,16 +96,22 @@ void TransferData(uint2 id : SV_DispatchThreadID)
     float3 _n1 = normalize(SampleBuffer(NormalBuffer, _sp));
     float3 _v = _p1 - _p2;
 
-    uint _width, _height;
-   PositionMap.GetDimensions(_width, _height);
-
-   uint _bufferId = id.x + id.y * _width;
-   PositionSampledBuffer[_bufferId] = _p1;
-   NormalSampledBuffer[_bufferId] = _n1;
-   VelocityBuffer[_bufferId]  = _v;
-
-
    PositionMap[id] = float4(_p1, 1);
    VelocityMap[id] = float4(_v, 0);
    NormalMap[id] = float4(_n1, 0);
+}
+
+[numthreads(8, 1, 1)]
+void TransferData_Buffer(uint id : SV_DispatchThreadID)
+{
+    SamplePoint _sp = SamplePoints[id];
+
+    float3 _p1 = SampleBuffer(PositionBuffer1, _sp);
+    float3 _p2 = SampleBuffer(PositionBuffer2, _sp);
+    float3 _n1 = normalize(SampleBuffer(NormalBuffer, _sp));
+    float3 _v = _p1 - _p2;
+
+   PositionSampledBuffer[id] = _p1;
+   NormalSampledBuffer[id] = _n1;
+   VelocityBuffer[id]  = _v;
 }
