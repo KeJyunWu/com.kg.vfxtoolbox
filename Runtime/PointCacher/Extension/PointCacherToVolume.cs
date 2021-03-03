@@ -16,6 +16,8 @@ namespace UltraCombos.VFXToolBox
         public Transform Container { get => m_container; set => m_container = value; }
 
         [TitleGroup("Velocity Volume")]
+        [SerializeField, Range(0, 10)] float m_enhance = 0.1f;
+        public float Enhance { get => m_enhance; set => m_enhance = value; }
         [SerializeField, Range(0, 4)] float m_drag = 0.1f;
         public float Drag { get => m_drag; set => m_drag = value; }
 
@@ -55,6 +57,7 @@ namespace UltraCombos.VFXToolBox
             m_computeShader.SetBuffer(_injectKernel, "m_positionSampledBuffer", m_pointCacher.PositionSampledBuffer);
             m_computeShader.SetVector("m_containerCenter", m_container.position);
             m_computeShader.SetVector("m_containerScale", m_container.localScale);
+            m_computeShader.SetFloat("m_enhance", m_enhance+1);
             m_computeShader.Dispatch(_injectKernel, Mathf.CeilToInt(m_pointCacher.PointCount/8.0f),1,1);
 
             int _decayKernel = m_computeShader.FindKernel("Decay");

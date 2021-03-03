@@ -11,6 +11,7 @@ StructuredBuffer<float3> m_positionSampledBuffer;
 float3 m_containerCenter;
 float3 m_containerScale;
 float m_drag;
+float m_enhance;
 
 // return 1 if v inside the box, return 0 otherwise
 float insideBox3D(float3 v, float3 bottomLeft, float3 topRight) {
@@ -23,7 +24,7 @@ void Inject (uint3 id : SV_DispatchThreadID)
 {
 	uint _index = id.x;
 	float3 _uv = m_positionSampledBuffer[_index];
-	float3 _velocity = m_velocityBuffer[_index];
+	float3 _velocity = m_velocityBuffer[_index]* m_enhance;
 
 	uint _width, _height, _depth;
 	m_result.GetDimensions(_width, _height, _depth);
