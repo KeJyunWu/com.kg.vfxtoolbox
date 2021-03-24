@@ -11,6 +11,18 @@ namespace UltraCombos.VFXToolBox
     public static class Common
     {
 #if UNITY_EDITOR
+        public static Texture2D ConvertRTtoTex2D(RenderTexture _RT)
+        {
+            //RenderTexture.active = _RT;
+            Texture2D _tex = new Texture2D(_RT.width, _RT.height, TextureFormat.RGBAFloat, false);
+            //_tex.ReadPixels(new Rect(0, 0, _RT.width, _RT.height), 0, 0);
+          //  RenderTexture.active = null;
+            
+            Graphics.CopyTexture(_RT, _tex);
+          //  _tex.Apply();
+            return _tex;
+        }
+
         public static void SaveRenderTextureIntoPNG(RenderTexture _RT, string _fullPath, string _name)
         {
             RenderTexture.active = _RT;
