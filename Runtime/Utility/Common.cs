@@ -161,8 +161,10 @@ namespace UltraCombos.VFXToolBox
         {
             RenderTexture _rt = new RenderTexture(_width, _height, _depth, _format);
             _rt.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-            _rt.filterMode = _filterMode;
             _rt.volumeDepth = _volume;
+            _rt.filterMode = _filterMode;
+            _rt.wrapMode = TextureWrapMode.Repeat;
+            _rt.useMipMap = false;
             _rt.enableRandomWrite = true;
             _rt.Create();
             return _rt;
@@ -172,6 +174,8 @@ namespace UltraCombos.VFXToolBox
         {
             RenderTexture _rt = new RenderTexture(_width, _height, 0, _format);
             _rt.filterMode = _filterMode;
+            _rt.wrapMode = TextureWrapMode.Repeat;
+            _rt.useMipMap = false;
             _rt.enableRandomWrite = true;
             _rt.Create();
             return _rt;
