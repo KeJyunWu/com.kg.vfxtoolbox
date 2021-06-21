@@ -157,7 +157,7 @@ namespace UltraCombos.VFXToolBox
             return rt;
         }
 
-        public static RenderTexture CreateRT(int _width, int _height, int _depth, int _volume, RenderTextureFormat _format, FilterMode _filterMode)
+        public static RenderTexture Allocate(int _width, int _height, int _depth, int _volume, RenderTextureFormat _format, FilterMode _filterMode)
         {
             RenderTexture _rt = new RenderTexture(_width, _height, _depth, _format);
             _rt.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
@@ -170,7 +170,7 @@ namespace UltraCombos.VFXToolBox
             return _rt;
         }
 
-        public static RenderTexture CreateRT(int _width, int _height, RenderTextureFormat _format, FilterMode _filterMode)
+        public static RenderTexture Allocate(int _width, int _height, RenderTextureFormat _format, FilterMode _filterMode)
         {
             RenderTexture _rt = new RenderTexture(_width, _height, 0, _format);
             _rt.filterMode = _filterMode;
@@ -181,14 +181,14 @@ namespace UltraCombos.VFXToolBox
             return _rt;
         }
 
-        public static RenderTexture CreateRT(RenderTexture _source)
+        public static RenderTexture Allocate(RenderTexture _source)
         {
             RenderTexture _rt = new RenderTexture(_source);
             _rt.Create();
             return _rt;
         }
 
-        public static RenderTexture CreateRT(RenderTextureDescriptor _descriptor)
+        public static RenderTexture Allocate(RenderTextureDescriptor _descriptor)
         {
             RenderTexture _rt = new RenderTexture(_descriptor);
             _rt.Create();

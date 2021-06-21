@@ -76,8 +76,8 @@ namespace UltraCombos.VFXToolBox
             }
             if(_b)
             {
-                m_swapBuffer[READ] = RenderTextureUtil.CreateRT(m_resolution.x, m_resolution.y, 0, m_resolution.z, RenderTextureFormat.ARGBFloat, FilterMode.Point);
-                m_swapBuffer[WRITE] = RenderTextureUtil.CreateRT(m_resolution.x, m_resolution.y, 0, m_resolution.z, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                m_swapBuffer[READ] = RenderTextureUtil.Allocate(m_resolution.x, m_resolution.y, 0, m_resolution.z, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+                m_swapBuffer[WRITE] = RenderTextureUtil.Allocate(m_resolution.x, m_resolution.y, 0, m_resolution.z, RenderTextureFormat.ARGBFloat, FilterMode.Point);
             }
         }
 
