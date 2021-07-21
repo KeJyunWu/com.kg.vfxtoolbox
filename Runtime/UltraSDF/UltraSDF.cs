@@ -10,6 +10,9 @@ namespace UltraCombos.VFXToolBox
     public class UltraSDF : MonoBehaviour
     {
         [TitleGroup("Stsyem")]
+        [SerializeField] bool m_onlyBakeOnce = false;
+        public bool OnlyBakeOnce { get => m_onlyBakeOnce; set => m_onlyBakeOnce = value; }
+
         [SerializeField] int m_resolution = 64;
         public int Resolution { get => m_resolution; set => m_resolution = value; }
 
@@ -56,6 +59,7 @@ namespace UltraCombos.VFXToolBox
         ComputeBuffer m_indexBuffer;
         Mesh m_tempMesh;
         Vector3[] m_tempArray;
+        bool m_block = false;
 
         private void OnEnable() => InitializeInternals();
         private void OnDisable() => DisposeInternals();
@@ -70,26 +74,29 @@ namespace UltraCombos.VFXToolBox
         {
             if (m_tempMesh == null) InitializeInternals();
 
-            var _vertexOffset = 0;
-            var _indexOffset = 0;
-            foreach (var source in m_skinnedMeshes)
+            if (!m_block)
             {
-                var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
-                _vertexOffset += _offset._vOffset;
-                _indexOffset += _offset._iOffset;
+                var _vertexOffset = 0;
+                var _indexOffset = 0;
+                foreach (var source in m_skinnedMeshes)
+                {
+                    var _offset = SkinnedMeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                    _vertexOffset += _offset._vOffset;
+                    _indexOffset += _offset._iOffset;
+                }
+
+                foreach (var source in m_meshes)
+                {
+                    var _offset = MeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
+                    _vertexOffset += _offset._vOffset;
+                    _indexOffset += _offset._iOffset;
+                }
+
+                Result = MeshToVoxel(m_resolution, m_samplesPerTriangle, m_vertexBuffer, m_indexBuffer, Result);
+
+                if (m_doSDF)
+                    FloodFillToSDF(Result);
             }
-
-            foreach (var source in m_meshes)
-            {
-                var _offset = MeshBake(source, _vertexOffset, _indexOffset, source.transform.localToWorldMatrix);
-                _vertexOffset += _offset._vOffset;
-                _indexOffset += _offset._iOffset;
-            }
-
-            Result = MeshToVoxel(m_resolution, m_samplesPerTriangle, m_vertexBuffer, m_indexBuffer, Result);
-
-            if (m_doSDF)
-                FloodFillToSDF(Result);
 
             if (m_viewerMat)
             {
@@ -98,6 +105,11 @@ namespace UltraCombos.VFXToolBox
                 else
                     m_viewerMat.SetTexture(m_viewerMatPropertyName, Result);
             }
+
+            if (m_onlyBakeOnce)
+                m_block = true;
+            else
+                m_block = false;
         }
 
         (int _vOffset, int _iOffset) SkinnedMeshBake(SkinnedMeshRenderer _source, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
