@@ -9,4 +9,17 @@ namespace UltraCombos.VFXToolBox
         RenderTexture,
         Texture3D
     }
+
+	public enum Dimention
+	{
+		Two,
+		Three
+	}
+
+	public enum BlendMode
+	{
+		Add,
+		Sub,
+		Mul
+	}
 }

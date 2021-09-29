@@ -1,0 +1,67 @@
+
+#pragma multi_compile_local  _TwoDimention _ThreeDimention
+#pragma kernel Init
+#pragma kernel Core
+
+//0 : Add
+//1 : Sub
+//2 : Mul
+int m_blendMode;
+
+Texture3D<float4> m_intput1_3d;
+Texture3D<float4> m_intput2_3d;
+RWTexture3D<float4> m_output_3d;
+
+Texture2D<float4> m_intput1_2d;
+Texture2D<float4> m_intput2_2d;
+RWTexture2D<float4> m_output_2d;
+
+float4 Compute(float4 _d1, float4 _d2)
+{
+	if(m_blendMode == 0)
+		return _d1 + _d2;
+	else if(m_blendMode == 1)
+		return _d1 - _d2;
+	else
+		return _d1 * _d2;
+}
+
+[numthreads(8,8,8)]
+void Init (uint3 id : SV_DispatchThreadID)
+{
+#if defined(_ThreeDimention)
+	m_output_3d[id] = float4(0,0,0,1);
+#elif defined(_TwoDimention)
+	m_output_2d[id.xy] = float4(0,0,0,1);
+#endif
+}
+
+[numthreads(8,8,8)]
+void Core (uint3 id : SV_DispatchThreadID)
+{
+	float _in1_width, _in1_height, _in1_depth;
+	float _in2_width, _in2_height, _in2_depth;
+	float _out_width, _out_height, _out_depth;
+
+#if defined(_ThreeDimention)
+		m_intput1_3d.GetDimensions(_in1_width, _in1_height, _in1_depth);
+		m_intput2_3d.GetDimensions(_in2_width, _in2_height, _in2_depth);
+		m_output_3d.GetDimensions(_out_width, _out_height, _out_depth);
+
+		float3 _normalizeUV = float3(id.x/_out_width, id.y/_out_height, id.z/_out_depth);
+
+		float4 _s1 = m_intput1_3d[_normalizeUV * float3(_in1_width, _in1_height, _in1_depth)];
+		float4 _s2 = m_intput2_3d[_normalizeUV * float3(_in2_width, _in2_height, _in2_depth)];
+		m_output_3d[id] =  Compute(_s1, _s2);
+#elif defined(_TwoDimention)
+		m_intput1_2d.GetDimensions(_in1_width, _in1_height);
+		m_intput2_2d.GetDimensions(_in2_width, _in2_height);
+		m_output_2d.GetDimensions(_out_width, _out_height);
+
+		float2 _normalizeUV = float2(id.x/_out_width, id.y/_out_height);
+
+		float4 _s1 = m_intput1_2d[_normalizeUV * float2(_in1_width, _in1_height)];
+		float4 _s2 = m_intput2_2d[_normalizeUV * float2(_in2_width, _in2_height)];
+		m_output_2d[id.xy] = Compute(_s1, _s2);
+#endif
+}
