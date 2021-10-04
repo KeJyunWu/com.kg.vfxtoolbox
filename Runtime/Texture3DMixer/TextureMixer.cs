@@ -94,9 +94,12 @@ namespace UltraCombos.VFXToolBox
         {
             m_initKernel = m_shader.FindKernel("Init");
             m_coreKernel = m_shader.FindKernel("Core");
-        }
 
-        void Update()
+			m_shader.EnableKeyword( m_dimention == Dimention.Three ? "_ThreeDimention" : "_TwoDimention" );
+			m_shader.DisableKeyword( m_dimention == Dimention.Three ? "_TwoDimention" : "_ThreeDimention" );
+		}
+
+		void Update()
         {
             if (m_layers != null && m_layers.Count != 0)
             {
@@ -116,9 +119,6 @@ namespace UltraCombos.VFXToolBox
                     int m_dispatchX = Mathf.CeilToInt(m_swapBuffer[READ].width / NUM_THREADS);
                     int m_dispatchY = Mathf.CeilToInt(m_swapBuffer[READ].height / NUM_THREADS);
                     int m_dispatchZ = Mathf.Max(Mathf.CeilToInt(m_swapBuffer[READ].volumeDepth / NUM_THREADS),1);
-
-					m_shader.EnableKeyword( m_dimention == Dimention.Three ? "_ThreeDimention" : "_TwoDimention");
-					m_shader.DisableKeyword( m_dimention == Dimention.Three ? "_TwoDimention" : "_ThreeDimention" );
 
 					m_shader.SetInt( "m_dimention", m_dimention == Dimention.Two ? 2 : 3 );
 					string _suffix = m_dimention == Dimention.Two ? "_2d" : "_3d";
