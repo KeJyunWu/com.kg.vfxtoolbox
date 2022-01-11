@@ -24,6 +24,7 @@ namespace UltraCombos.VFXToolBox
     public class PointCacher : MonoBehaviour
     {
         [TitleGroup("System")]
+        [SerializeField] bool m_RunOnce = false;
         [SerializeField] int m_pointCount = 5;
         public int PointCount { get => m_pointCount; set => m_pointCount = value; }
 
@@ -80,6 +81,8 @@ namespace UltraCombos.VFXToolBox
         public RenderTexture VelocityMap { get => m_velocityMap; }
         RenderTexture m_normalMap;
         public RenderTexture NormalMap { get => m_normalMap; }
+        RenderTexture m_uvMap;
+        public RenderTexture UVMap { get => m_uvMap; }
 
         //Result Stored Buffer
         ComputeBuffer m_positionSampledBuffer;
@@ -88,10 +91,13 @@ namespace UltraCombos.VFXToolBox
         public ComputeBuffer VelocityBuffer { get => m_velocityBuffer; }
         ComputeBuffer m_normalSampledBuffer;
         public ComputeBuffer NormalSampledBuffer { get => m_normalSampledBuffer; }
+        ComputeBuffer m_UVSampledBuffer;
+        public ComputeBuffer UVSampledBuffer { get => m_UVSampledBuffer; }
 
         //Compute Data Buffer
         ComputeBuffer m_samplePointsBuffer;
         ComputeBuffer m_rawIndexBuffer;
+        ComputeBuffer m_rawUVBuffer;
         ComputeBuffer m_rawNormalBuffer;
         (ComputeBuffer m_positionBuffer1, ComputeBuffer m_positionBuffer2) m_rawPositionBuffer;
 
@@ -106,6 +112,8 @@ namespace UltraCombos.VFXToolBox
         private void OnEnable() => InitializeInternals();
         private void OnDisable() => DisposeInternals();
 
+        bool m_blocked = false;
+
         public void Reset()
         {
             DisposeInternals();
@@ -118,6 +126,9 @@ namespace UltraCombos.VFXToolBox
 
         private void LateUpdate()
         {
+            if (m_RunOnce && m_blocked)
+                return;
+
             if (m_tempMesh == null) InitializeInternals();
 
             var _vertexOffset = 0;
@@ -144,6 +155,9 @@ namespace UltraCombos.VFXToolBox
             TransferData();
 
             (m_rawPositionBuffer.m_positionBuffer1, m_rawPositionBuffer.m_positionBuffer2) = (m_rawPositionBuffer.m_positionBuffer2, m_rawPositionBuffer.m_positionBuffer1);
+
+            if (m_RunOnce)
+                m_blocked = true;
         }
 
         (int _vOffset, int _iOffset) SkinnedMeshBake(SkinnedMeshRenderer _source, int _vertexOffset, int _indexOffset, Matrix4x4 _objectToWorld, Matrix4x4 _worldToObject)
@@ -168,10 +182,12 @@ namespace UltraCombos.VFXToolBox
                 using (var pos = MemoryUtil.TempJobArray<Vector3>(_vcount))
                 using (var index = MemoryUtil.TempJobArray<int>(_icount))
                 using (var nrm = MemoryUtil.TempJobArray<Vector3>(_vcount))
+                using (var uv  = MemoryUtil.TempJobArray<Vector2>(_vcount))
                 {
                     _data.GetVertices(pos);
                     _data.GetNormals(nrm);
                     _data.GetIndices(index, 0);
+                    _data.GetUVs(0, uv);
 
                     new ConcatenationJob
                     { m_output = index, m_indexOffset = _vertexOffset }.Run();
@@ -179,6 +195,7 @@ namespace UltraCombos.VFXToolBox
                     m_rawPositionBuffer.m_positionBuffer1.SetData(pos, 0, _vertexOffset, _vcount);
                     m_rawIndexBuffer.SetData(index, 0, _indexOffset, _icount);
                     m_rawNormalBuffer.SetData(nrm, 0, _vertexOffset, _vcount);
+                    m_rawUVBuffer.SetData(uv, 0, _vertexOffset, _vcount);
 
                     m_pointCacherCS.SetInt("m_offset", _vertexOffset);
                     m_pointCacherCS.SetInt("m_count", _vcount);
@@ -204,12 +221,15 @@ namespace UltraCombos.VFXToolBox
             m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer1", m_rawPositionBuffer.m_positionBuffer1);
             m_pointCacherCS.SetBuffer(_kernel, "PositionBuffer2", m_rawPositionBuffer.m_positionBuffer2);
             m_pointCacherCS.SetBuffer(_kernel, "NormalBuffer", m_rawNormalBuffer);
+            m_pointCacherCS.SetBuffer(_kernel, "UVBuffer", m_rawUVBuffer);
 
             m_pointCacherCS.SetBuffer(_kernel, "PositionSampledBuffer", m_positionSampledBuffer);
             m_pointCacherCS.SetBuffer(_kernel, "NormalSampledBuffer", m_normalSampledBuffer);
+            m_pointCacherCS.SetBuffer(_kernel, "UVSampledBuffer", m_UVSampledBuffer);
             m_pointCacherCS.SetBuffer(_kernel, "VelocityBuffer", m_velocityBuffer);
 
             m_pointCacherCS.SetTexture(_kernel, "PositionMap", m_positionMap);
+            m_pointCacherCS.SetTexture(_kernel, "UVMap", m_uvMap);
             m_pointCacherCS.SetTexture(_kernel, "VelocityMap", m_velocityMap);
             m_pointCacherCS.SetTexture(_kernel, "NormalMap", m_normalMap);
         }
@@ -255,9 +275,11 @@ namespace UltraCombos.VFXToolBox
                 m_rawPositionBuffer.m_positionBuffer2 = new ComputeBuffer(mesh.Vertices.Length, sizeof(float) * 3);
                 m_rawNormalBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float) * 3);
                 m_rawIndexBuffer = new ComputeBuffer(mesh.Indices.Length, sizeof(int));
+                m_rawUVBuffer = new ComputeBuffer(mesh.Vertices.Length, sizeof(float) * 2);
                 m_velocityBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 3);
                 m_positionSampledBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 3);
                 m_normalSampledBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 3);
+                m_UVSampledBuffer = new ComputeBuffer(m_pointCount, sizeof(float) * 2);
                 m_positionSampledArray = new Vector3[m_pointCount];
 
                 m_tempRawPositionDebugArray = new Vector3[mesh.Vertices.Length];
@@ -269,6 +291,7 @@ namespace UltraCombos.VFXToolBox
             var width = 256;
             var height = (((m_pointCount + width - 1) / width + 7) / 8) * 8;
             m_positionMap = RenderTextureUtil.AllocateFloat(width, height);
+            m_uvMap = RenderTextureUtil.AllocateFloat(width, height);
             m_velocityMap = RenderTextureUtil.AllocateHalf(width, height);
             m_normalMap = RenderTextureUtil.AllocateHalf(width, height);
 
@@ -288,6 +311,9 @@ namespace UltraCombos.VFXToolBox
             m_normalSampledBuffer?.Dispose();
             m_normalSampledBuffer = null;
 
+            m_UVSampledBuffer?.Dispose();
+            m_UVSampledBuffer = null;
+
             m_velocityBuffer?.Dispose();
             m_velocityBuffer = null;
 
@@ -303,8 +329,14 @@ namespace UltraCombos.VFXToolBox
             m_rawIndexBuffer?.Dispose();
             m_rawIndexBuffer = null;
 
+            m_rawUVBuffer?.Dispose();
+            m_rawUVBuffer = null;
+
             ObjectUtil.Destroy(m_positionMap);
             m_positionMap = null;
+
+            ObjectUtil.Destroy(m_uvMap);
+            m_uvMap = null;
 
             ObjectUtil.Destroy(m_velocityMap);
             m_velocityMap = null;

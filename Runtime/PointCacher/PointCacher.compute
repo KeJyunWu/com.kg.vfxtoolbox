@@ -14,17 +14,21 @@ StructuredBuffer<SamplePoint> SamplePoints;
 StructuredBuffer<float3> PositionBuffer1;
 StructuredBuffer<float3> PositionBuffer2;
 StructuredBuffer<float3> NormalBuffer;
+StructuredBuffer<float2> UVBuffer;
 
 RWStructuredBuffer<float3> PositionSampledBuffer;
 RWStructuredBuffer<float3> NormalSampledBuffer;
+RWStructuredBuffer<float2> UVSampledBuffer;
 RWStructuredBuffer<float3> VelocityBuffer;
 
 RWTexture2D<float4> PositionMap;
 RWTexture2D<float4> VelocityMap;
 RWTexture2D<float4> NormalMap;
+RWTexture2D<float4> UVMap;
 
 RWStructuredBuffer<float3> PositionTransformBuffer;
 RWStructuredBuffer<float3> NormalTransformBuffer;
+
 int m_offset;
 int m_count;
 float4x4 m_objectToWorldMatrix;
@@ -36,11 +40,18 @@ float3 m_positionFlip;
 
 int m_matrixType;
 
-float3 SampleBuffer(StructuredBuffer<float3> buffer, SamplePoint sp)
+float3 SampleBuffer3D(StructuredBuffer<float3> buffer, SamplePoint sp)
 {
     return buffer[sp.indices.x] * sp.weights.x + 
            buffer[sp.indices.y] * sp.weights.y + 
            buffer[sp.indices.z] * sp.weights.z;
+}
+
+float2 SampleBuffer2D(StructuredBuffer<float2> buffer, SamplePoint sp)
+{
+    return buffer[sp.indices.x] * sp.weights.x +
+        buffer[sp.indices.y] * sp.weights.y +
+        buffer[sp.indices.z] * sp.weights.z;
 }
 
 // Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
@@ -91,14 +102,16 @@ void TransferData_RT(uint2 id : SV_DispatchThreadID)
     uint si = Hash(id.x + id.y * 65536) % SampleCount;
     SamplePoint _sp = SamplePoints[si];
 
-    float3 _p1 = SampleBuffer(PositionBuffer1, _sp);
-    float3 _p2 = SampleBuffer(PositionBuffer2, _sp);
-    float3 _n1 = normalize(SampleBuffer(NormalBuffer, _sp));
+    float3 _p1 = SampleBuffer3D(PositionBuffer1, _sp);
+    float3 _p2 = SampleBuffer3D(PositionBuffer2, _sp);
+    float3 _n1 = normalize(SampleBuffer3D(NormalBuffer, _sp));
+    float2 _uv1 = SampleBuffer2D(UVBuffer, _sp);
     float3 _v = _p1 - _p2;
 
    PositionMap[id] = float4(_p1, 1);
-   VelocityMap[id] = float4(_v, 0);
    NormalMap[id] = float4(_n1, 0);
+   VelocityMap[id] = float4(_v, 0);
+   UVMap[id] = float4(_uv1, 0, 0);
 }
 
 [numthreads(8, 1, 1)]
@@ -106,12 +119,14 @@ void TransferData_Buffer(uint id : SV_DispatchThreadID)
 {
     SamplePoint _sp = SamplePoints[id];
 
-    float3 _p1 = SampleBuffer(PositionBuffer1, _sp);
-    float3 _p2 = SampleBuffer(PositionBuffer2, _sp);
-    float3 _n1 = normalize(SampleBuffer(NormalBuffer, _sp));
+    float3 _p1 = SampleBuffer3D(PositionBuffer1, _sp);
+    float3 _p2 = SampleBuffer3D(PositionBuffer2, _sp);
+    float3 _n1 = normalize(SampleBuffer3D(NormalBuffer, _sp));
+    float2 _uv1 = SampleBuffer2D(UVBuffer, _sp);
     float3 _v = _p1 - _p2;
 
    PositionSampledBuffer[id] = _p1;
    NormalSampledBuffer[id] = _n1;
+   UVSampledBuffer[id] = _uv1;
    VelocityBuffer[id]  = _v;
 }
