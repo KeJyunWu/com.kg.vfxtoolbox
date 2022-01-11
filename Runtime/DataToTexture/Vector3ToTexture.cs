@@ -15,14 +15,15 @@ namespace UltraCombos.VFXToolBox
 
         [Space]
         public List<Vector3> m_vectors = new List<Vector3>();
-        public RenderTexture Result { get { return m_result; } }
+        public RenderTexture Result { get { return m_vectors.Count == 0 ? m_tempTex : m_result; } }
 
-        [SerializeField, HideInInspector] ComputeShader m_shader;
+        [SerializeField] ComputeShader m_shader;
         ComputeBuffer m_buffer;
         [SerializeField, ReadOnly] RenderTexture m_result;
 
         int m_prevCount = 0;
         Vector3[] m_tempArray;
+        [SerializeField] RenderTexture m_tempTex;
 
         public void ForceUpdate()
         {
@@ -72,6 +73,14 @@ namespace UltraCombos.VFXToolBox
             }
 
             return true;
+        }
+
+
+        private void Start()
+        {
+            m_tempTex = RenderTextureUtil.Allocate(1, 1, RenderTextureFormat.ARGBFloat, FilterMode.Point);
+            m_shader.SetTexture(m_shader.FindKernel("Init"), "m_result", m_tempTex);
+            m_shader.Dispatch(m_shader.FindKernel("Init"), 1, 1, 1);
         }
 
         private void Update()

@@ -1,9 +1,16 @@
 #pragma kernel CopyFloat3Data
-#pragma kernel CopyFloatData
+#pragma kernel CopyFloat3Data
+#pragma kernel Init
 
 StructuredBuffer<float3> m_float3Buffer;
 StructuredBuffer<float> m_floatBuffer;
 RWTexture2D<float4> m_result;
+
+[numthreads(1, 1, 1)]
+void Init(uint3 id : SV_DispatchThreadID)
+{
+	m_result[id.xy] = float4(100000,100000,100000,100000);
+}
 
 [numthreads(1, 1, 1)]
 void CopyFloat3Data(uint3 id : SV_DispatchThreadID)
