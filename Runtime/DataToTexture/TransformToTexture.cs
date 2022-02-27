@@ -136,7 +136,7 @@ namespace UltraCombos.VFXToolBox
         private void OnDestroy()
         {
             Release();
-            Destroy(m_tempTex);
+            DestroyImmediate(m_tempTex);
         }
     }
 }
