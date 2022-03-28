@@ -1,0 +1,12 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Core
+
+Texture2D<float4> m_source;
+RWTexture2D<float4> m_result;
+float2 m_startPointPos;
+
+[numthreads(1,1,1)]
+void Core (uint3 id : SV_DispatchThreadID)
+{
+    m_result[id.xy+m_startPointPos] = m_source[id.xy];
+}
