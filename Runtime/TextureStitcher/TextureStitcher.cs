@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 
 public class TextureStitcher : MonoBehaviour
 {
-    [TitleGroup("Stsyem Parameter")]
+    [TitleGroup("System Parameter")]
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Vector2Int m_resolution;
     public Vector2Int Resolution { get { return m_resolution; } }
@@ -14,6 +14,9 @@ public class TextureStitcher : MonoBehaviour
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Texture[] m_sources;
     public Texture[] Sources { get { return m_sources; } }
+
+    [SerializeField]
+    Texture m_mask;
 
     [SerializeField, HideInInspector]
     ComputeShader m_shader;
@@ -51,6 +54,10 @@ public class TextureStitcher : MonoBehaviour
             _index ++;
             _startPointPos.x += m_sources[i].width;
         }
+
+        m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_source", m_mask);
+        m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_result", m_result);
+        m_shader.Dispatch(m_shader.FindKernel("Mask"), m_resolution.x, m_resolution.y, 1);
     }
 
     private void OnDestroy()
