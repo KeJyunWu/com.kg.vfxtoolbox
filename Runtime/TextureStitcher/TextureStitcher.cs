@@ -55,9 +55,12 @@ public class TextureStitcher : MonoBehaviour
             _startPointPos.x += m_sources[i].width;
         }
 
-        m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_source", m_mask);
-        m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_result", m_result);
-        m_shader.Dispatch(m_shader.FindKernel("Mask"), m_resolution.x, m_resolution.y, 1);
+        if (m_mask != null)
+        {
+            m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_source", m_mask);
+            m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_result", m_result);
+            m_shader.Dispatch(m_shader.FindKernel("Mask"), m_resolution.x, m_resolution.y, 1);
+        }
     }
 
     private void OnDestroy()
