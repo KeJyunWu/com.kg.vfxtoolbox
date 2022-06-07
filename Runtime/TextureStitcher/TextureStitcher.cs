@@ -16,7 +16,12 @@ public class TextureStitcher : MonoBehaviour
     public Texture[] Sources { get { return m_sources; } }
 
     [SerializeField]
-    Texture m_mask;
+    Texture m_stampTex;
+    public Texture StampTex { set { m_stampTex = value; } get { return m_stampTex; } }
+    [SerializeField]
+    bool m_stampUVFlip_w = false;
+    [SerializeField]
+    bool m_stampUVFlip_h = false;
 
     [SerializeField, HideInInspector]
     ComputeShader m_shader;
@@ -55,11 +60,13 @@ public class TextureStitcher : MonoBehaviour
             _startPointPos.x += m_sources[i].width;
         }
 
-        if (m_mask != null)
+        if (m_stampTex != null)
         {
-            m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_source", m_mask);
-            m_shader.SetTexture(m_shader.FindKernel("Mask"), "m_result", m_result);
-            m_shader.Dispatch(m_shader.FindKernel("Mask"), m_resolution.x, m_resolution.y, 1);
+            m_shader.SetBool("m_stampUVFlip_w", m_stampUVFlip_w);
+            m_shader.SetBool("m_stampUVFlip_h", m_stampUVFlip_h);
+            m_shader.SetTexture(m_shader.FindKernel("Stamp"), "m_source", m_stampTex);
+            m_shader.SetTexture(m_shader.FindKernel("Stamp"), "m_result", m_result);
+            m_shader.Dispatch(m_shader.FindKernel("Stamp"), m_resolution.x, m_resolution.y, 1);
         }
     }
 

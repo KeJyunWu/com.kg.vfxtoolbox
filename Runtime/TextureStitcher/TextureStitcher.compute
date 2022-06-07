@@ -1,10 +1,12 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Core
-#pragma kernel Mask
+#pragma kernel Stamp
 
 Texture2D<float4> m_source;
 RWTexture2D<float4> m_result;
 float2 m_startPointPos;
+bool m_stampUVFlip_w;
+bool m_stampUVFlip_h;
 
 [numthreads(1,1,1)]
 void Core (uint3 id : SV_DispatchThreadID)
@@ -13,7 +15,13 @@ void Core (uint3 id : SV_DispatchThreadID)
 }
 
 [numthreads(1,1,1)]
-void Mask (uint3 id : SV_DispatchThreadID)
+void Stamp (uint3 id : SV_DispatchThreadID)
 {
-    m_result[id.xy] = m_result[id.xy] * m_source[id.xy];
+    float4 _r = m_result[id.xy];
+
+    uint _width, _height;
+    m_source.GetDimensions(_width, _height);
+
+    float4 _s = m_source[float2(m_stampUVFlip_w? _width- id.x : id.x, m_stampUVFlip_h ? _height - id.y : id.y)];
+    m_result[id.xy] = lerp(_r, _s, _s.w);
 }
