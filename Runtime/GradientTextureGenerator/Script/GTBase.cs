@@ -13,6 +13,7 @@ namespace UltraCombos.VFXToolBox
         protected Texture2D CreateTexture()
         {
             Texture2D _tex = new Texture2D(m_resolution, 1, TextureFormat.RGBAFloat, false, false);
+            _tex.filterMode = FilterMode.Bilinear;
             _tex.Apply();
             return _tex;
         }
@@ -33,9 +34,10 @@ namespace UltraCombos.VFXToolBox
 
             try
             {
+                float _inv = 1f / (_texture.width - 1);
                 for (int i = 0; i < m_resolution; i++)
                 {
-                    _texture.SetPixel(i, 0, _gradient.Evaluate(i / (float)m_resolution));
+                    _texture.SetPixel(i, 0, _gradient.Evaluate(i* _inv));
                 }
                 _texture.Apply();
             }
