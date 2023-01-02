@@ -24,6 +24,8 @@ namespace UltraCombos.VFXToolBox
 
         [TitleGroup("Material Apply")]
         [SerializeField] MaterialApply[] m_materials;
+        public MaterialApply[] Materials { get { return m_materials; } set { m_materials = value; } }
+
         [Space]
         [TitleGroup("Event")]
         public UnityEvent<Texture2D> OnEvent = new UnityEvent<Texture2D>();
