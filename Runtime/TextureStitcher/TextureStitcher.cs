@@ -9,7 +9,7 @@ public class TextureStitcher : MonoBehaviour
     [TitleGroup("System Parameter")]
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Vector2Int m_resolution;
-    public Vector2Int Resolution { get { return m_resolution; } }
+    public Vector2Int Resolution { get { return m_resolution; } set { m_resolution = value; } }
 
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Texture[] m_sources;
