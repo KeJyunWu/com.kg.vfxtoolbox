@@ -15,7 +15,7 @@ namespace UltraCombos.VFXToolBox
             public string m_propertyName;
         }
 
-        [SerializeField] Gradient m_gradient;
+        [SerializeField, GradientUsage(true, ColorSpace.Linear)] Gradient m_gradient;
         public Gradient Gradient { get { return m_gradient; } set { m_gradient = value; } }
 
         [SerializeField, ReadOnly]
