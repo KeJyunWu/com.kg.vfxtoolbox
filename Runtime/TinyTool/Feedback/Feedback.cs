@@ -44,6 +44,7 @@ public class Feedback : MonoBehaviour
         m_matInstance.SetTexture("_Source", m_source);
         m_matInstance.SetTexture("_Source2", m_rts[1]);
         m_matInstance.SetFloat("_DecayFactor", m_decayFactor);
+        m_matInstance.SetFloat("_DeltaTime", Time.deltaTime);
         Graphics.Blit(null, m_rts[0], m_matInstance);
 
         if (m_outputResult != null)
