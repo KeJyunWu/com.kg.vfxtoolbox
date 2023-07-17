@@ -20,6 +20,8 @@ public class SimpleBlit : MonoBehaviour
         if(m_mat != null && m_rt != null && Time.time> m_timeStamp + m_interval)
         {
             m_timeStamp = Time.time;
+            if(m_mat.HasFloat("_customTime"))
+                m_mat.SetFloat("_customTime", Time.time);
             Graphics.Blit(null, m_rt, m_mat);
         }
     }
