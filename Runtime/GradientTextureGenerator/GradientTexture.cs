@@ -32,7 +32,8 @@ namespace UltraCombos.VFXToolBox
 
         void InternalUpdate()
         {
-            UpdateTexture(ref m_result, m_gradient);
+            TextureChecking(ref m_result);
+            TextureInjection(ref m_result, Gradient);
             OnEvent?.Invoke(m_result);
 
             var _filter =

@@ -10,6 +10,7 @@ namespace UltraCombos.VFXToolBox
         /// <summary>
         /// 
         /// </summary>
+        /// 
         [SerializeField, LabelText("Select Index")] int m_index = 0;
         public int Index { get { return m_index; } set { m_index = value; } }
 
@@ -37,6 +38,17 @@ namespace UltraCombos.VFXToolBox
         public Texture2D GetSubGradientTextureByIndex(int _index) { return m_textures[Mathf.Clamp(_index, 0, m_gradient.Count - 1)]; }
         public Texture2DArray GetAllGradientTextureWith2DArray() { UpdateTextureArray(ref m_textureArray, m_textures, m_gradient.Count); return m_textureArray; }
 
+        public void SetIndex(float _delay, int _index)
+        {
+            StartCoroutine(_setIndex(_delay,_index));
+        }
+
+        IEnumerator _setIndex(float _delay, int _index)
+        {
+            yield return new WaitForSeconds(_delay);
+            m_index = _index;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -44,14 +56,15 @@ namespace UltraCombos.VFXToolBox
         {
             for (var i = 0; i < m_gradient.Count; i++)
             {
-                UpdateTexture(ref m_textures[i], m_gradient[i]);
+                TextureChecking(ref m_textures[i]);
+                TextureInjection(ref m_textures[i], m_gradient[i]);
             }
         }
 
         void Awake()
         {
-            m_mat = new Material(m_shader);
             Reset();
+            m_mat = new Material(m_shader);
             Graphics.Blit(m_textures[ClampIndex], m_outputRT);
         }
 
@@ -59,7 +72,9 @@ namespace UltraCombos.VFXToolBox
         {
             for (var i = 0; i < m_gradient.Count; i++)
             {
-                UpdateTexture(ref m_textures[i], m_gradient[i]);
+                TextureChecking(ref m_textures[i]);
+                if (m_alwaysUpdateTexture)
+                    TextureInjection(ref m_textures[i], m_gradient[i]);
             }
 
             if (m_outputRT != null && m_mat != null && m_gradient.Count != 0)
