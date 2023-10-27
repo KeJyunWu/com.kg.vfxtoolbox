@@ -1,0 +1,696 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NewShaderVariants
+  m_Shaders:
+  - first: {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 6, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+  - first: {fileID: 9000, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9001, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9002, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9003, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9004, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9007, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9101, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 9103, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: eb56c59e60b76874692c486f3bdd860d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 6e4ae4064600d784cac1e41a9e6f2e59, type: 3}
+    second:
+      variants:
+      - keywords: _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _NORMALMAP_TANGENT_SPACE
+        passType: 8
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 8
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP_TANGENT_SPACE
+        passType: 8
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_DECALS _DISABLE_SSR
+          _DISABLE_SSR_TRANSPARENT _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT
+          _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT
+          _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT
+          _MASKMAP _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: PROBE_VOLUMES_OFF _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT _MASKMAP _NORMALMAP
+          _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _MATERIAL_FEATURE_CLEAR_COAT
+          _NORMALMAP_TANGENT_SPACE
+        passType: 13
+      - keywords: _DISABLE_SSR_TRANSPARENT _MASKMAP _NORMALMAP _NORMALMAP_TANGENT_SPACE
+        passType: 13
+  - first: {fileID: 4800000, guid: 2fcfb8d92f45e4549b3f0bad5d0654bf, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 2e37131331fbdca449b1a2bc47a639ca, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 8ea49ef16606acd489439e676ab84040, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 42dfcc8fe803ece4096c58630689982f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e22fc1942c664490980b8793dd4a163d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: DISABLE_TEXTURE2D_X_ARRAY
+        passType: 0
+  - first: {fileID: 4800000, guid: 123ed592ad5c2494b8aed301fd609e7b, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 32f724728cf19904291226f239ec16f0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 123f13d52852ef547b2962de4bd9eaad, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 3b3bf235775cf8b4baae7f3306787ab0, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: d279c46a545b0af4f9f0c4fa82cd489e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: a6402c19b020b4a4fb7073aaa2e26aba, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: c243aac96dda5fa40bed693ed5ba02c4, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e3cab24f27741f44d8af1e94d006267c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: fd532bf1795188c4daaa66ea798b8b0a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5ac9ef0c50282754b93c7692488e7ee7, type: 3}
+    second:
+      variants:
+      - keywords: APPLY_AFTER_POST
+        passType: 0
+      - keywords: APPLY_AFTER_POST BYPASS
+        passType: 0
+  - first: {fileID: 4800000, guid: 017a05924c0b0484ca29717ed0c60343, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: b34ae865fa79c66418bc50ca471c8e9f,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 7b181c57b04168f499ef7c55645ee562,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: ba3ffcf8e84089c4981b1334c27d3ab7,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 6b5c66336922cf243aaebd62bd85a27a,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: bc65170c051b0724287a7f1636d87573, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 4b5d592fba9e97a4b966aa786a528f70,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 61052d7da6f80f446a81bf38234a650c,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 358d49a312264464caabb70e1afa9c72,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: _ALPHATEST_ON _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE
+          _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON _REFRACTION_SPHERE
+          _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DOUBLESIDED_ON _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE
+          _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DOUBLESIDED_ON _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 3e194dd93bd1c7a448d0d7b04b7bae27,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 3563c99b730bc9e4fa4f077338785bd3,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE
+          _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: 4800000, guid: 338519b7b767148e181c420b58df5f70, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 99f2824a5841e5e4f9734e94414600be,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 92d2a75216041cb45a0960abbee3a0f3, type: 3}
+    second:
+      variants:
+      - keywords: VLB_ALPHA_AS_BLACK VLB_DEPTH_BLEND VLB_NOISE_3D VLB_SHADER_ACCURACY_HIGH
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 8cb1803971a66c047bef2e71a9dab589,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 3ef4e80f3f0be2542babaad92e656fb7,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 11
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 12
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_FPTL_LIGHTLIST _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: f1a4dadd0f7e5424b92f790e6c1627fd,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 8c99a656999d05841a57483d412f5c69,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+  - first: {fileID: -6465566751694194690, guid: 77a16a9314e868f48975e0115cd7f9f1,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 1e126f56a5d398741a92dbdf28c34acb,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _PATTERNTYPE_NOISE3
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: _DEPTHOFFSET_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _PATTERNTYPE_NOISE1
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT
+          _PATTERNTYPE_NOISE3 _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _DEPTHOFFSET_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT
+          _PATTERNTYPE_NOISE1 _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _PATTERNTYPE_NOISE3
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _DEPTHOFFSET_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _PATTERNTYPE_NOISE1
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 5625d23d1fb7ed04eb0db50e8e362a7e,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_DECALS
+          _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 542556dc136a9e6419f3050fe2b6b51e,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 91128c1dad8ae1645b7e54a5e186cd9c,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 3c88c339b7d7d4537b423df244a83a4e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 17fc290d2f21db04da023f771fe542e2,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_DECALS
+          _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 83ea2cea3e713c9419257345a65f7c2f,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 6e058d123672f674799fd1072e73d6d1, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 924d5e6be0d55294e89ae9a03b93ef99, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 55a1893e86caacd4e85fa48fe3f99d46, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: da07703fcc09f8d4799221050659bd55, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 36e335017ad71d54fbb10842863188ae, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: db2d065681f3b45c1a50728e6ce14d55, type: 3}
+    second:
+      variants:
+      - keywords: BEAUTIFY_FROZEN
+        passType: 0
+  - first: {fileID: 4800000, guid: fe68a85d89de1e548b7a248993438cc5, type: 3}
+    second:
+      variants:
+      - keywords: LITTLE_KERNEL
+        passType: 0
+  - first: {fileID: 4800000, guid: 5780825d5491b974c906674dd368b36a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+          _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: 4800002, guid: 5780825d5491b974c906674dd368b36a, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHATEST_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 71708ec44e2f14c49a2c46ce14fdc12d, type: 3}
+    second:
+      variants:
+      - keywords: _ALPHATEST_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 214cad7f10d69234097859ede49b58c5, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DEPTHOFFSET_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DEPTHOFFSET_ON
+          _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DEPTHOFFSET_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: 4800000, guid: 6925f5d168196124dac9187d156bbb2e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT
+          _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: 4800000, guid: bc868b998e7186d46803377ac920a20b, type: 3}
+    second:
+      variants:
+      - keywords: AREA_SHADOW_MEDIUM PROBE_VOLUMES_OFF SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST
+        passType: 13
+  - first: {fileID: 4800000, guid: 837a82b2fcc7380409a00ddcdfd1fe91, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM PROBE_VOLUMES_OFF SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST
+        passType: 13
+  - first: {fileID: 4800000, guid: 8c3a09b864f42b84b967519bddba6017, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_DECALS
+          _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 66ebe296d93d0ff4d93f38136ac501db, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DEPTHOFFSET_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DEPTHOFFSET_ON
+          _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DEPTHOFFSET_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: f6afd59c554af964d8ee87e3e499541e, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 8
+      - keywords: AREA_SHADOW_MEDIUM DECALS_4RT PROBE_VOLUMES_OFF SCREEN_SPACE_SHADOWS_OFF
+          SHADOW_MEDIUM USE_CLUSTERED_LIGHTLIST _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+          _ENABLE_FOG_ON_TRANSPARENT _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _ENABLE_FOG_ON_TRANSPARENT
+          _REFRACTION_SPHERE _SURFACE_TYPE_TRANSPARENT
+        passType: 13
+  - first: {fileID: 4800000, guid: fcc921a2260186048bf6d31f2c288bdf, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: 4800004, guid: ce7d5244584dce6439d86265f8cc8530, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+  - first: {fileID: 4800000, guid: ce7d5244584dce6439d86265f8cc8530, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: LIGHT_LAYERS PROBE_VOLUMES_OFF
+        passType: 13
+  - first: {fileID: 4800002, guid: ce7d5244584dce6439d86265f8cc8530, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: LIGHT_LAYERS PROBE_VOLUMES_OFF
+        passType: 13
+  - first: {fileID: 4800000, guid: 4c5bef0e38c379f4b8ba9ded0fbcbe9b, type: 3}
+    second:
+      variants:
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_DECALS
+          _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: dbf2034a28538ef4aaa5160126e76a8d, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_DECALS
+          _DISABLE_SSR _DISABLE_SSR_TRANSPARENT _DOUBLESIDED_ON
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+          _DOUBLESIDED_ON
+        passType: 13
+  - first: {fileID: 4800000, guid: 3378dd8c90af7724c92cef7bb6c75ace, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: e544b53a81646bb46bba3f81c412be7b,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_DECALS _DISABLE_SSR
+          _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _DISABLE_DECALS _DISABLE_SSR _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: d0f2aebb4e338cb439144ede57babd9f,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: bcebb48c396b17a44898113ab548fcb1,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: -6465566751694194690, guid: 06567a2ec3019d6498b67b6850a689d2,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800002, guid: 66ebe296d93d0ff4d93f38136ac501db, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _DISABLE_SSR_TRANSPARENT
+        passType: 13
+  - first: {fileID: -6465566751694194690, guid: 909b4d8a122a9694590212df1762e5b6,
+      type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 8
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 8
+      - keywords: DECALS_4RT LIGHT_LAYERS PROBE_VOLUMES_OFF _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
+      - keywords: _ALPHATEST_ON _DISABLE_SSR_TRANSPARENT
+        passType: 13
