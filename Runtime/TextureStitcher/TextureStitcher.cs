@@ -51,11 +51,14 @@ public class TextureStitcher : MonoBehaviour
             m_result = null;
         }
 
-        m_result = new RenderTexture(m_resolution.x, m_resolution.y, 0, RenderTextureFormat.ARGBFloat);
-        m_result.enableRandomWrite = true;
-        m_result.Create();
+        if (m_resolution.x != 0 && m_resolution.y != 0)
+        {
+            m_result = new RenderTexture(m_resolution.x, m_resolution.y, 0, RenderTextureFormat.ARGBFloat);
+            m_result.enableRandomWrite = true;
+            m_result.Create();
 
-        OnEvent?.Invoke(m_result);
+            OnEvent?.Invoke(m_result);
+        }
     }
 
     private void Start()
@@ -101,6 +104,7 @@ public class TextureStitcher : MonoBehaviour
 
     private void OnDestroy()
     {
-        m_result?.Release();
+        if(m_result!=null)
+            m_result.Release();
     }
 }
