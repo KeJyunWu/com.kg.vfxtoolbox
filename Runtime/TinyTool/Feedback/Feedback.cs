@@ -1,20 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public class Feedback : MonoBehaviour
 {
     [SerializeField]
-    Vector2Int m_resolutions = new Vector2Int(500,500);
-
-    [SerializeField]
     Texture m_source;
 
     [SerializeField]
-    float m_decayFactor = 1;
+    RenderTexture m_outputResult;
+
+    [SerializeField, EnableIf("@m_outputResult == null")]
+    Vector2Int m_resolutions = new Vector2Int(500, 500);
 
     [SerializeField]
-    RenderTexture m_outputResult;
+    float m_decayFactor = 1;
 
     [SerializeField, HideInInspector]
     Material m_mat;
@@ -24,7 +25,12 @@ public class Feedback : MonoBehaviour
 
     RenderTexture CreateRT()
     {
-        RenderTexture _rt = new RenderTexture(m_resolutions.x, m_resolutions.y, 0, RenderTextureFormat.ARGBFloat);
+        RenderTexture _rt = new RenderTexture(
+            m_outputResult != null ? m_outputResult.width : m_resolutions.x,
+            m_outputResult != null ? m_outputResult.height : m_resolutions.y, 
+            0, 
+            RenderTextureFormat.ARGBFloat);
+
         _rt.enableRandomWrite = false;
         _rt.Create();
         return _rt;
