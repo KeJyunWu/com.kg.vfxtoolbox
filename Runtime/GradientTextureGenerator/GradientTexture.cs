@@ -36,14 +36,17 @@ namespace UltraCombos.VFXToolBox
             TextureInjection(ref m_result, Gradient);
             OnEvent?.Invoke(m_result);
 
-            var _filter =
-            from _source in m_materials
-            where _source.m_material != null && _source.m_material.HasProperty(_source.m_propertyName)
-            select _source;
-
-            foreach(MaterialApply _apply in _filter)
+            if (m_materials != null)
             {
-                _apply.m_material.SetTexture(_apply.m_propertyName, m_result);
+                var _filter =
+                from _source in m_materials
+                where _source.m_material != null && _source.m_material.HasProperty(_source.m_propertyName)
+                select _source;
+
+                foreach (MaterialApply _apply in _filter)
+                {
+                    _apply.m_material.SetTexture(_apply.m_propertyName, m_result);
+                }
             }
         }
 

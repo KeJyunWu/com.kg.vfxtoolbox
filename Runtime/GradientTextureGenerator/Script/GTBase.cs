@@ -9,7 +9,7 @@ namespace UltraCombos.VFXToolBox
         [SerializeField]
         protected bool m_alwaysUpdateTexture = true;
 
-        [SerializeField, Range(1, 256)]
+        [SerializeField, Range(2, 256)]
         protected int m_resolution = 128;
         public int Resolution { get { return m_resolution; } set { m_resolution = value; } }
 
@@ -44,6 +44,8 @@ namespace UltraCombos.VFXToolBox
 
         protected void TextureInjection(ref Texture2D _texture, Gradient _gradient)
         {
+            if (_texture == null)
+                return;
             try
             {
                 float _inv = 1f / (_texture.width - 1);
