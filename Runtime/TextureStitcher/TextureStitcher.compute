@@ -7,11 +7,19 @@ RWTexture2D<float4> m_result;
 float2 m_startPointPos;
 bool m_stampUVFlip_w;
 bool m_stampUVFlip_h;
+int m_anchorMode;
 
 [numthreads(1,1,1)]
 void Core (uint3 id : SV_DispatchThreadID)
 {
-    m_result[id.xy+m_startPointPos] = m_source[id.xy];
+    if (m_anchorMode==1)
+        m_result[id.xy + m_startPointPos] = m_source[id.xy];
+    else if (m_anchorMode == 0)
+    {
+        uint _width, _height;
+        m_source.GetDimensions(_width, _height);
+        m_result[float2(m_startPointPos.x + id.x, m_startPointPos.y - id.y)] = m_source[float2(id.x, (_height - 1) - id.y)];
+    }
 }
 
 [numthreads(1,1,1)]

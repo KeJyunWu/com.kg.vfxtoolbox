@@ -10,12 +10,26 @@ public class TextureStitcher : MonoBehaviour
         Vertical,
         Horizontal
     }
+
+    public enum Anchor
+    {
+        LEFTUP,
+        LEFTDOWN
+    }
+
+
     [TitleGroup("System Parameter")]
     [SerializeField]
     bool m_updateOnce = false;
 
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Mode m_mode;
+
+    [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
+    Anchor m_anchorPoint;
+
+    [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
+    int m_numForEachRowOrColume;
 
     [SerializeField, HideIf("@UnityEngine.Application.isPlaying == true")]
     Vector2Int m_resolution;
@@ -61,7 +75,7 @@ public class TextureStitcher : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         Init();
     }
@@ -74,21 +88,66 @@ public class TextureStitcher : MonoBehaviour
         {
             m_b = true;
             int _index = 0;
-            Vector2 _startPointPos = new Vector2(0, 0);
+
+            Vector2 _startPointPos = new Vector2(0,0);
+            switch(m_anchorPoint)
+            {
+                case Anchor.LEFTDOWN:
+                    _startPointPos = new Vector2(0, 0);
+                    break;
+                case Anchor.LEFTUP:
+                    _startPointPos = new Vector2(0, m_resolution.y-1);
+                    break;
+            }
+
             for (int i = 0; i < m_sources.Length; i++)
             {
                 m_shader.SetTexture(m_shader.FindKernel("Core"), "m_source", m_sources[i]);
                 m_shader.SetTexture(m_shader.FindKernel("Core"), "m_result", m_result);
+                m_shader.SetInt("m_anchorMode", (int)m_anchorPoint);
                 m_shader.SetVector("m_startPointPos", _startPointPos);
                 m_shader.Dispatch(m_shader.FindKernel("Core"),
                     m_sources[i].width,
                     m_sources[i].height,
                      1);
-                _index++;
+
                 if (m_mode == Mode.Horizontal)
-                    _startPointPos.x += m_sources[i].width;
+                {
+                    if (_index < m_numForEachRowOrColume-1)
+                    {
+                        _startPointPos.x += m_sources[i].width;
+                        _index++;
+                    }
+                    else
+                    {
+                        _index = 0;
+                        _startPointPos.x = 0;
+                        if (m_anchorPoint == Anchor.LEFTDOWN)
+                            _startPointPos.y += m_sources[i].height;
+                        else
+                            _startPointPos.y -= m_sources[i].height;
+                    }
+                }
                 else
-                    _startPointPos.y += m_sources[i].height;
+                {
+                    if (_index < m_numForEachRowOrColume - 1)
+                    {
+                        if (m_anchorPoint == Anchor.LEFTDOWN)
+                            _startPointPos.y += m_sources[i].height;
+                        else
+                            _startPointPos.y -= m_sources[i].height;
+                        _index++;
+                    }
+                    else
+                    {
+                        _index = 0;
+                        _startPointPos.x += m_sources[i].width;
+                        if (m_anchorPoint == Anchor.LEFTDOWN)
+                            _startPointPos.y = 0;
+                        else
+                            _startPointPos.y = m_resolution.y - 1;
+                    }
+                }
             }
 
             if (m_stampTex != null)
@@ -107,4 +166,11 @@ public class TextureStitcher : MonoBehaviour
         if(m_result!=null)
             m_result.Release();
     }
+
+    private void OnValidate()
+    {
+        if (m_numForEachRowOrColume < 1)
+            m_numForEachRowOrColume = 1;
+    }
+
 }
