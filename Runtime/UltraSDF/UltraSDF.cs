@@ -120,7 +120,7 @@ namespace UltraCombos.VFXToolBox
 
         (int _vOffset, int _iOffset) MeshBake(MeshFilter _source, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
         {
-            return BakeSource(_source.mesh, _vertexOffset, _indexOffset, _transform);
+            return BakeSource(_source.sharedMesh, _vertexOffset, _indexOffset, _transform);
         }
 
         (int _vOffset, int _iOffset) BakeSource(Mesh _mesh, int _vertexOffset, int _indexOffset, Matrix4x4 _transform)
