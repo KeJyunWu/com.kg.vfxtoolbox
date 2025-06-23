@@ -5,9 +5,6 @@ using UnityEngine.Splines;
 [RequireComponent(typeof(SplineContainer))]
 public class SplineToTexture : MonoBehaviour
 {
-    [SerializeField, Range(1,256),HideInPlayMode]
-    int m_resolutionWidth = 128;
-
     [SerializeField]
     RenderTexture m_outpurRT;
 
@@ -16,7 +13,7 @@ public class SplineToTexture : MonoBehaviour
 
     Texture2D TextureCreating()
     {
-        Texture2D _tex = new Texture2D(m_resolutionWidth, 1, TextureFormat.RGBAFloat, false, false);
+        Texture2D _tex = new Texture2D(m_outpurRT.width, 1, TextureFormat.RGBAFloat, false, false);
         _tex.filterMode = FilterMode.Point;
         _tex.Apply();
         return _tex;
@@ -29,7 +26,7 @@ public class SplineToTexture : MonoBehaviour
         try
         {
             float _inv = 1f / (m_dataMap.width - 1);
-            for (int i = 0; i < m_resolutionWidth; i++)
+            for (int i = 0; i < m_outpurRT.width; i++)
             {
                 Vector3 _p = _spline.EvaluatePosition(i * _inv);
                 _p += transform.position;
@@ -45,18 +42,21 @@ public class SplineToTexture : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        m_SplineContainer = GetComponent<SplineContainer>();
-        m_dataMap = TextureCreating();
-        m_outpurRT.width = m_dataMap.width;
-        m_outpurRT.height = m_dataMap.height;
+        if (m_outpurRT != null)
+        {
+            m_SplineContainer = GetComponent<SplineContainer>();
+            m_dataMap = TextureCreating();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Spline _s = m_SplineContainer.Spline;
-        TextureInjection(m_SplineContainer.Spline);
-        if(m_outpurRT != null)
+        if (m_outpurRT != null)
+        {
+            Spline _s = m_SplineContainer.Spline;
+            TextureInjection(m_SplineContainer.Spline);
             Graphics.Blit(m_dataMap, m_outpurRT);
+        }
     }
 }
