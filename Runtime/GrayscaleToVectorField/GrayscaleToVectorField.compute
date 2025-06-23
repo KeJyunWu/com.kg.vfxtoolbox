@@ -1,0 +1,51 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+Texture2D<float> GrayMap;
+RWTexture2D<float4> VecFieldMap;
+float2 ValueRange;
+float Intensity;
+float WindowSize;
+
+float2 Remap(float2 value, float2 inMin, float2 inMax, float2 outMin, float2 outMax)
+{
+    return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin);
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    int2 texSize;
+    GrayMap.GetDimensions(texSize.x, texSize.y);
+    
+    int2 coord = int2(id.xy);
+    
+    if (coord.x <= 0 || coord.y <= 0 || coord.x >= texSize.x - 1 || coord.y >= texSize.y - 1)
+    {
+        VecFieldMap[coord] = float4(0, 0,0,0);
+        return;
+    }
+    
+    int window = WindowSize;
+    float left = GrayMap.Load(int3(coord.x - window, coord.y, 0));
+    float right = GrayMap.Load(int3(coord.x + window, coord.y, 0));
+    float top = GrayMap.Load(int3(coord.x, coord.y + window, 0));
+    float bottom = GrayMap.Load(int3(coord.x, coord.y - window, 0));
+
+    float dx = (right - left) * 0.5;
+    float dy = (top - bottom) * 0.5;
+    
+    float2 gradient;
+    if (dx * dy == 0)
+        gradient = float2(0, 0);
+    else
+        gradient =normalize(float2(dx, dy));
+
+    gradient = Remap(gradient, float2(-1, -1), float2(1, 1), float2(ValueRange.x, ValueRange.x), float2(ValueRange.y, ValueRange.y));
+    
+    // Optional: Normalize or scale gradient if needed
+    VecFieldMap[coord] = float4(gradient.xy, Intensity, 1);
+}
+
