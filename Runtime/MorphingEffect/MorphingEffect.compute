@@ -1,0 +1,15 @@
+#pragma kernel Tween
+
+Texture2D<float4> Source;
+RWTexture2D<float4> Output;
+float DeltaTime;
+float TweenSpeed;
+
+[numthreads(32, 32, 1)]
+void Tween(uint3 id : SV_DispatchThreadID)
+{
+    float4 _source = Source[id.xy];
+    float4 _result = Output[id.xy];
+    
+    Output[id.xy] = lerp(_source, _result, pow(2.718, DeltaTime * -TweenSpeed));
+}
