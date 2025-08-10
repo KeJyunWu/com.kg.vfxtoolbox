@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class MorphingEffect : MonoBehaviour
 {
@@ -23,6 +24,11 @@ public class MorphingEffect : MonoBehaviour
         m_shader.SetFloat("TweenSpeed", m_tweenSpeed);
         m_shader.SetTexture(0, "Source", m_source);
         m_shader.SetTexture(0, "Output", m_output);
-        m_shader.Dispatch(0, 1024 / 32, 1024 / 32, 1);
+
+        m_shader.GetKernelThreadGroupSizes(0, out uint x, out uint y, out uint z);
+        m_shader.Dispatch(0,
+            Mathf.Max(1, CoreUtils.DivRoundUp(m_source.width, (int)x)),
+            Mathf.Max(1, CoreUtils.DivRoundUp(m_source.height, (int)y)),
+            Mathf.Max(1, CoreUtils.DivRoundUp(1, (int)z)));
     }
 }
